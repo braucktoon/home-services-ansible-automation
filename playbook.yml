@@ -1,0 +1,13 @@
+---
+- hosts: all
+
+  vars:
+    username: vagrant
+    docker_dir: /data
+
+  roles:
+     - system
+     - nut-client
+     - docker
+     - node-exporter
+     - portainer

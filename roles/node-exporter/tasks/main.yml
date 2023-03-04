@@ -1,0 +1,19 @@
+- name: Make sure the node-exporter container is created and running
+  community.general.docker_container:
+    name: "node-exporter"
+    image: prom/node-exporter:v1.5.0
+    privileged: true
+    pull: yes
+    state: "started"
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    restart_policy: always

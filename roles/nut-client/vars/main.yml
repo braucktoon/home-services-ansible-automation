@@ -1,0 +1,6 @@
+---
+# UPS name
+ups_name: ups
+
+# Nut server address
+nut_server: 10.0.0.233
