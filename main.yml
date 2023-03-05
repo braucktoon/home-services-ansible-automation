@@ -6,9 +6,10 @@
     docker_dir: /data
 
   roles:
-     - system
-     - nut-client
-     - docker
-     - node-exporter
+     #- nut-client
+     #- docker
+     #- node-exporter
      #- portainer
-     - pihole
+      - portainer-agent
+     #- pihole
+     #- unattended-upgrades

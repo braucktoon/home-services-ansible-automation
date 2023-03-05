@@ -1,0 +1,24 @@
+---
+- name: Install unattended-upgrades
+  ansible.builtin.package:
+    name: unattended-upgrades
+    state: present
+
+- name: Ensure that unattended-upgrades service is started and enabled on boot
+  service:
+    name: unattended-upgrades
+    state: started
+    enabled: true
+
+- name: Copy 50unattended-upgrades file
+  ansible.builtin.copy:
+    src: resources/unattended-upgrades/50unattended-upgrades
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    mode: preserve
+
+- name: Copy 20auto-upgrades file
+  ansible.builtin.copy:
+    src: resources/unattended-upgrades/20auto-upgrades
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    mode: preserve
+  notify: restart unattended-upgrades
