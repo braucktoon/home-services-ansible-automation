@@ -27,3 +27,6 @@ sudo apt-get install unattended-upgrades
 sudo nano /etc/apt/apt.conf.d/50unattended-upgrades - turn on automatic reboots
 udo dpkg-reconfigure --priority=low unattended-upgrades - configure it to run automatically
 sudo systemctl restart unattended-upgrades - restart the service
+
+To install pihole sever, ansible-playbook -b -i inventory --ask-vault-password -u pi main.yml
+TODO: I need to tag the roles, I commneted out portainer for example.

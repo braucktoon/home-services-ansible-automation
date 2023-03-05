@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
 
   # Ansible provisioner.
   config.vm.provision :ansible do |ansible|
-    ansible.playbook = "playbook.yml"
+    ansible.playbook = "main.yml"
     ansible.become = true
     ansible.ask_vault_pass = true
   end

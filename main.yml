@@ -2,7 +2,7 @@
 - hosts: all
 
   vars:
-    username: vagrant
+    username: pi
     docker_dir: /data
 
   roles:
@@ -10,4 +10,5 @@
      - nut-client
      - docker
      - node-exporter
-     - portainer
+     #- portainer
+     - pihole
