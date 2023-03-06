@@ -7,9 +7,9 @@
 
   roles:
      #- nut-client
-     #- docker
+     - docker
      #- node-exporter
      #- portainer
-      - portainer-agent
+     #- portainer-agent
      #- pihole
      #- unattended-upgrades
