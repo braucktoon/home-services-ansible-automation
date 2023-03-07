@@ -1,3 +1,4 @@
+---
 - name: Make sure the node-exporter container is created and running
   community.general.docker_container:
     name: "node-exporter"
