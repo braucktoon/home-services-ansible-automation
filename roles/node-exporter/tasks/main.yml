@@ -18,3 +18,4 @@
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     restart_policy: always
+  become: false

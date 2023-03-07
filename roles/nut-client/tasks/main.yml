@@ -1,35 +1,28 @@
 ---
 - name: Install nut-client
-  ansible.builtin.package:
+  ansible.builtin.apt:
+    update_cache: yes
     name: nut-client
     state: present
 
-- name: Copy nut.conf file
-  ansible.builtin.copy:
-    src: resources/nut-client/nut.conf
-    dest: /etc/nut/nut.conf
-    mode: preserve
-
-- name: Copy upsmon.conf file
-  ansible.builtin.copy:
-    src: resources/nut-client/upsmon.conf
-    dest: /etc/nut/upsmon.conf
-    mode: preserve
-
-- name: Copy upssched-cmd file with execute permissions
-  ansible.builtin.copy:
-    src: resources/nut-client/upssched-cmd
-    dest: /etc/nut/upssched-cmd
+- name: Copy unattended-upgrades configuration files in place.
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/nut/{{ item }}"
     owner: root
     group: nut
-    mode: '0655'
-
-- name: Copy upssched.conf file
-  ansible.builtin.copy:
-    src: resources/nut-client/upssched.conf
-    dest: /etc/nut/upssched.conf
-    mode: preserve
+    mode: 0600
+  with_items:
+    - nut.conf
+    - upsmon.conf
+    - upssched-cmd
+    - upssched.conf
   notify: restart nut-client
+
+- name: make upssched-cmd executable.
+  ansible.builtin.file:
+    path: /etc/nut/upssched-cmd
+    mode: '0755'
 
 - name: Ensure that nut-client service is started and enabled on boot
   service:
@@ -37,7 +30,6 @@
     state: started
     enabled: true
 
-  
 - name: Ensure that nut client can connect to nut server
   ansible.builtin.command: upsc {{ ups_name }}@{{ nut_server }}
   register: upsc_output

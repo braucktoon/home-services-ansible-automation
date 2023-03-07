@@ -32,3 +32,4 @@
       - "{{ docker_dir }}/pihole/etc-pihole:/etc/pihole:rw"
       - "{{ docker_dir }}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d:rw"
     restart_policy: always
+  become: false

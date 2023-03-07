@@ -1,6 +1,7 @@
 ---
 - name: Install required system packages
-  ansible.builtin.package:
+  ansible.builtin.apt:
+    update_cache: yes
     state: present
     name: "{{ docker_deps }}"
 
@@ -16,7 +17,6 @@
 
 - name: Update apt and install docker
   ansible.builtin.apt:
-    update_cache: yes
     name: "{{ docker_packages }}"
     state: present
 
@@ -33,11 +33,10 @@
     append: yes
 
 - name: Make sure Docker is running and enabled
-  ansible.builtin.systemd:
+  service:
     name: docker
-    daemon_reload: yes
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Make base docker data directory
   ansible.builtin.file:

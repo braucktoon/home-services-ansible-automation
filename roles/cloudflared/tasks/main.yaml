@@ -11,3 +11,5 @@
       - '--token'
       - '{{TUNNEL_TOKEN}}'
     restart_policy: always
+  become: false
+    

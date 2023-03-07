@@ -1,0 +1,68 @@
+---
+# update the system
+- name: Run the equivalent of "apt-get update" as a separate step
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Run the equivalent of "apt-get full-upgrade" as a separate step
+  ansible.builtin.apt:
+    upgrade: full
+
+- name: Run the equivalent of "apt-get clean" as a separate step
+  ansible.builtin.apt:
+    clean: true
+
+- name: Check if reboot is required
+  stat:
+    path: /var/run/reboot-required
+  register: register_name
+
+- name: Unconditionally reboot the machine with all defaults
+  ansible.builtin.reboot:
+  when: register_name.stat.exists
+
+# Install unattended-upgrades
+- name: Install unattended upgrades package.
+  ansible.builtin.apt:
+    name: unattended-upgrades
+    state: present
+
+- name: Ensure that unattended-upgrades service is started and enabled on boot
+  service:
+    name: unattended-upgrades
+    state: started
+    enabled: true
+
+- name: Copy unattended-upgrades configuration files in place.
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/apt/apt.conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 20auto-upgrades
+    - 50unattended-upgrades
+  notify: restart unattended-upgrades
+
+# install fail2ban
+- name: Install fail2ban.
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+
+- name: Copy fail2ban custom configuration file into place.
+  template:
+    src: "jail.local.j2"
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+
+- name: Ensure fail2ban is running and enabled on boot.
+  service:
+    name: fail2ban
+    state: started
+    enabled: true
