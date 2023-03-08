@@ -6,12 +6,21 @@
     docker_dir: /data
 
   roles:
-     #- security
-      - nut-client
-     #- docker
-     #- node-exporter
-     #- portainer
-     #- portainer-agent
-     #- pihole
-     #- cloudflared
+      - role: security
+        tags: [ security ]
+      - role: nut-client
+        tags: [ nut-client ]
+      - role: docker
+        tags: [ docker ]
+      - role: node-exporter
+        tags: [ node-exporter ]
+      - role: portainer
+        tags: [ portainer ]
+      - role: portainer-agent
+        tags: [ portainer-agent ]
+      - role: pihole
+        tags: [ pihole ]
+      - role: cloudflared
+        tags: [ cloudflared ]
+
 

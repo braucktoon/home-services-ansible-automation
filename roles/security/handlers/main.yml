@@ -8,3 +8,8 @@
   service:
     name: fail2ban
     state: restarted
+
+- name: restart ssh
+  service:
+    name: "{{ security_sshd_name }}"
+    state: "{{ security_ssh_restart_handler_state }}"
