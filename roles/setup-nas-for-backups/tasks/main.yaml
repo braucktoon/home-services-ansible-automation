@@ -1,0 +1,10 @@
+---
+  # Create backup folders on NAS
+  - name: Make backup directories on NAS
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "dmcgough"
+      group: "users"
+      mode: 0755
+    loop: "{{backup_dirs}}"

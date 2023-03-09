@@ -1,0 +1,6 @@
+---
+
+backup_dirs: 
+  - '/volume1/backups/fluff'
+  - '/volume1/backups/speedtest'
+  - '/volume1/backups/pihole'  
