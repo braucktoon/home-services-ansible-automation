@@ -6,13 +6,6 @@
       - role: setup-nas-for-backups
         tags: [setup-nas-for-backups]
 
-- name: setup backup host
-  hosts: [backup_host]
-  
-  roles:
-      - role: setup-backup-host
-        tags: [setup-backup-host]
-
 - name: process service hosts
   hosts: [service_hosts]
   become: true
@@ -20,6 +13,7 @@
   vars:
     username: pi
     docker_dir: /data
+    backups_dir: /backups
 
   roles:
       - role: security

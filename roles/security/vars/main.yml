@@ -17,3 +17,8 @@ security_sudoers_passworded: []
 
 security_ssh_config_path: /etc/ssh/sshd_config
 security_sshd_name: ssh
+
+ssh_key_filename: ed25519_backup_pi
+
+nas_host: 10.0.0.2
+nas_user: "dmcgough"

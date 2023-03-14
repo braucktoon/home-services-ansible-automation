@@ -9,7 +9,7 @@
 
 - name: Make sure the pihole/unbound container is created and running
   community.general.docker_container:
-    name: "pihole"
+    name: "{{container_name}}"
     image: cbcrowe/pihole-unbound:2023.01.10
     pull: yes
     state: "started"
@@ -32,4 +32,22 @@
       - "{{ docker_dir }}/pihole/etc-pihole:/etc/pihole:rw"
       - "{{ docker_dir }}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d:rw"
     restart_policy: always
+  become: false
+
+- name: Copy backup script file in place.
+  template:
+    src: "backup-pihole.sh.j2"
+    dest: "/usr/local/bin/backup-pihole.sh"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Add cron job to run backup weekly, at midnight on Sundays.
+  ansible.builtin.cron:
+    name: Run pihole-backup script.
+    minute: "0"
+    hour: "0"
+    weekday: "0"
+    job: "/usr/local/bin/backup-pihole.sh"
+    state: present
   become: false

@@ -1,6 +1,0 @@
----
-  # Copy backup script to host
-
-  # Copy backup server public key to NAS
-
-  # Create crontab entry to run backup each night

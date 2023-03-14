@@ -1,8 +1,5 @@
 [service_hosts]
-10.0.0.125 ansible_user=pi
+10.0.0.5 ansible_user=pi
 
 [nas]
 10.0.0.2 ansible_user=dmcgough
-
-[backup_host]
-10.0.0.125 ansible_user=pi
