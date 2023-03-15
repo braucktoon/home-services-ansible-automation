@@ -10,28 +10,20 @@
 - name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
     name: "{{container_name}}"
-    image: cbcrowe/pihole-unbound:2023.01.10
+    image: koush/scrypted
     pull: yes
     state: "started"
-    hostname: pihole
-    domainname: pihole.mchouseface.com
+    network_mode: host
     env:
-      FTLCONF_LOCAL_IPV4: "{{FTLCONF_LOCAL_IPV4}}"
-      TZ: "America/New_York"
-      WEBPASSWORD: "{{WEBPASSWORD}}"
-      WEBTHEME: "default-light"
-      PIHOLE_DNS_: "127.0.0.1#5335"
-      DNSSEC: "true"
-      DNSMASQ_LISTENING: "single"
-    ports:
-      - 1443:443/tcp
-      - 53:53/tcp
-      - 53:53/udp
-      - 18080:80/tcp
+      SCRYPTED_WEBHOOK_UPDATE_AUTHORIZATION: "SFKGJFJFJFKSFSKFWPWWPRRHHDH"
+      SCRYPTED_WEBHOOK_UPDATE: "http://localhost:10444/v1/update"
     volumes:
-      - "{{ docker_dir }}/{{container_name}}/etc-pihole:/etc/pihole:rw"
-      - "{{ docker_dir }}/{{container_name}}/etc-dnsmasq.d:/etc/dnsmasq.d:rw"
+      - "{{ docker_dir }}/{{container_name}}:/server/volume"
     restart_policy: always
+    log_driver: "json-file"
+    log_options:
+      max-size: "10m"
+      max-file: "10"
   become: false
 
 - name: Make {{container_name}} backup directory

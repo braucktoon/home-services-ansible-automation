@@ -1,15 +1,15 @@
 ---
-- name: Create the portainer config folder
+- name: Create the {{container_name}} config folder
   ansible.builtin.file:
-    path: "{{ docker_dir }}/portainer"
+    path: "{{ docker_dir }}/{{container_name}}"
     state: directory
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: 0755
 
-- name: Make sure the portainer container is created and running
+- name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
-    name: "portainer"
+    name: "{{container_name}}"
     image: portainer/portainer-ce:2.17.1
     pull: yes
     state: "started"
@@ -22,6 +22,6 @@
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - "{{ docker_dir }}/portainer:/data"
+      - "{{ docker_dir }}/{{container_name}}:/data"
   become: false
 

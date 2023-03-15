@@ -1,5 +1,9 @@
 ---
 backup_dirs: 
-  - '/volume1/backups/fluff'
-  - '/volume1/backups/speedtest'
   - '/volume1/backups/pihole' 
+  - '/volume1/backups/home-assistant' 
+  - '/volume1/backups/zigbee2mqtt'
+  - '/volume1/backups/mosquitto'
+  - '/volume1/backups/uptime-kuma'  
+  - '/volume1/backups/scrypted'
+  - '/volume1/backups/heimdall'

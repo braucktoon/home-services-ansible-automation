@@ -10,28 +10,18 @@
 - name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
     name: "{{container_name}}"
-    image: cbcrowe/pihole-unbound:2023.01.10
+    image: eclipse-mosquitto:2.0.15
     pull: yes
     state: "started"
-    hostname: pihole
-    domainname: pihole.mchouseface.com
-    env:
-      FTLCONF_LOCAL_IPV4: "{{FTLCONF_LOCAL_IPV4}}"
-      TZ: "America/New_York"
-      WEBPASSWORD: "{{WEBPASSWORD}}"
-      WEBTHEME: "default-light"
-      PIHOLE_DNS_: "127.0.0.1#5335"
-      DNSSEC: "true"
-      DNSMASQ_LISTENING: "single"
-    ports:
-      - 1443:443/tcp
-      - 53:53/tcp
-      - 53:53/udp
-      - 18080:80/tcp
     volumes:
-      - "{{ docker_dir }}/{{container_name}}/etc-pihole:/etc/pihole:rw"
-      - "{{ docker_dir }}/{{container_name}}/etc-dnsmasq.d:/etc/dnsmasq.d:rw"
+      - "{{ docker_dir }}/{{container_name}}/config:/mosquitto/config"
+      - "{{ docker_dir }}/{{container_name}}/data:/mosquitto/data"
+      - "{{ docker_dir }}/{{container_name}}/log:/mosquitto/log"
     restart_policy: always
+    ports:
+      - 1883:1883
+        # This port is for Webhooks
+      - 9001:9001
   become: false
 
 - name: Make {{container_name}} backup directory

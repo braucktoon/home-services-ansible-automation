@@ -32,6 +32,17 @@
         tags: [ pihole ]
       - role: cloudflared
         tags: [ cloudflared ]
-
+      - role: home-assistant
+        tags: [ home-assistant ]
+      - role: zigbee2mqtt
+        tags: [ zigbee2mqtt ]
+      - role: mosquitto
+        tags: [ mosquitto ]
+      - role: heimdall
+        tags: [ heimdall ]
+      - role: uptime-kuma
+        tags: [ uptime-kuma ]
+      - role: scrypted
+        tags: [ scrypted ]
 
 
