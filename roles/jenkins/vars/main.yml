@@ -1,0 +1,3 @@
+---
+container_name: jenkins
+ssh_key_filename: jenkins_agent_key

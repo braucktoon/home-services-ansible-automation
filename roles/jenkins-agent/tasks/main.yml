@@ -1,0 +1,13 @@
+---
+- name: Make sure the {{container_name}} container is created and running
+  community.general.docker_container:
+    name: "{{container_name}}"
+    image: jenkins/ssh-agent:4.12.0-jdk11
+    pull: yes
+    state: "started"
+    ports:
+      - "2222:22"
+    env:
+      JENKINS_AGENT_SSH_PUBKEY: "{{ssh_pub_key}}"
+    restart_policy: always
+  become: false

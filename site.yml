@@ -44,5 +44,8 @@
         tags: [ uptime-kuma ]
       - role: scrypted
         tags: [ scrypted ]
-
+      - role: jenkins
+        tags: [ jenkins ]
+      - role: jenkins-agent
+        tags: [ jenkins-agent ]
 
