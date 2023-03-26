@@ -46,6 +46,5 @@
         tags: [ scrypted ]
       - role: jenkins
         tags: [ jenkins ]
-      - role: jenkins-agent
-        tags: [ jenkins-agent ]
+
 
