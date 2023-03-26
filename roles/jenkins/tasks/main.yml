@@ -1,13 +1,4 @@
 ---
-- name: generate jenkins agent SSH key "{{ssh_key_filename}}".
-  connection: local
-  openssh_keypair:
-    path: "~/.ssh/{{ssh_key_filename}}"
-    state: present
-    force: false
-    comment: "pi@jenkins-agent"
-  become: false
-
 - name: Create the {{container_name}} config folder
   ansible.builtin.file:
     path: "{{ docker_dir }}/{{container_name}}"
