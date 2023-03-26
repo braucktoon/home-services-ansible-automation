@@ -1,14 +1,11 @@
 pipeline {
-  agent {label 'main'}
-
+  agent {
+    docker { image 'geerlingguy/docker-debian11-ansible' }
+  }
   stages {
-    stage('Hello') {
+    stage('Test') {
       steps {
-        sh '''
-          ansible --version
-          ansible-playbook --version
-          ansible-galaxy --version
-        '''
+        sh 'ansible --version'
       }
     }
   }
