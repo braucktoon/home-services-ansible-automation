@@ -6,7 +6,7 @@ pipeline {
   stages {
     stage('Test') {
       steps {
-        echo "My ansbile vault pw is ${VAULT_PW}"
+        sh('echo ${VAULT_PW}')
       }
     }
   }
