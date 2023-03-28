@@ -6,8 +6,8 @@ pipeline {
   stages {
     stage('Test') {
       steps {
-        env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP
-        env.HOME = env.WORKSPACE
+        sh('env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP')
+        sh('env.HOME = env.WORKSPACE')
         sh('ls -al')
         sh('ansible')
       }
