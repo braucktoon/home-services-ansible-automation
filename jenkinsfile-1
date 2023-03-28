@@ -11,7 +11,7 @@ pipeline {
             env.HOME = env.WORKSPACE
 
             sh """
-            ansible --version
+            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags jenkins
             """
         }
       }
