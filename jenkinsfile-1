@@ -1,11 +1,11 @@
 pipeline {
   agent { dockerfile true }
+  environment {
+    VAULT_PW = credentials('vaultpw')
   stages {
     stage('Test') {
       steps {
-        sh '''
-          ansible --version
-        '''
+        echo "My ansbile vault pw is ${VAULT_PW}"
       }
     }
   }
