@@ -11,6 +11,10 @@ pipeline {
             env.HOME = env.WORKSPACE
 
             sh """
+            ping 10.0.0.2
+            """
+
+            sh """
             ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags jenkins
             """
         }
