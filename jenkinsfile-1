@@ -1,7 +1,7 @@
 pipeline {
   agent { 
         dockerfile{ 
-          args '-v ~/.ssh:/root/.ssh:ro'
+          args '-v /home/pi/.ssh:/root/.ssh:ro'
         }
   }
   environment {
