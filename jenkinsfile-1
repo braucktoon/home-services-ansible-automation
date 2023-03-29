@@ -1,5 +1,7 @@
 pipeline {
-  agent { dockerfile true }
+  agent { dockerfile true 
+          args '-v ~/.ssh:/root/.ssh:ro'
+  }
   environment {
     VAULT_PW = credentials('vaultpw')
   }
@@ -9,10 +11,6 @@ pipeline {
         script {
             env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP
             env.HOME = env.WORKSPACE
-
-            sh """
-            ping 10.0.0.2
-            """
 
             sh """
             ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags jenkins
