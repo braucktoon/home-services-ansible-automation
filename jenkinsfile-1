@@ -1,6 +1,8 @@
 pipeline {
-  agent { dockerfile 
+  agent { 
+        dockerfile{ 
           args '-v ~/.ssh:/root/.ssh:ro'
+        }
   }
   environment {
     VAULT_PW = credentials('vaultpw')
