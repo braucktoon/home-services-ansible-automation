@@ -13,6 +13,10 @@ pipeline {
         script {
             env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP
             env.HOME = env.WORKSPACE
+            
+            sh """
+            ls -al /root/.ssh
+            """
 
             sh """
             ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags jenkins
