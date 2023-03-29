@@ -15,6 +15,7 @@ pipeline {
             env.HOME = env.WORKSPACE
             
             sh """
+            whoami
             ls -al /root/.ssh
             """
 
