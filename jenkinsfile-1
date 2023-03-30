@@ -13,14 +13,9 @@ pipeline {
         script {
             env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP
             env.HOME = env.WORKSPACE
-            
-            sh """
-            whoami
-            ls -al /root/.ssh
-            """
 
             sh """
-            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags jenkins
+            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags setup-nas-for-backups
             """
         }
       }
