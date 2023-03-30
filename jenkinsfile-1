@@ -15,6 +15,9 @@ pipeline {
             env.HOME = env.WORKSPACE
 
             sh """
+            whoami
+            ls -al ~
+            ls -al ~/.ssh
             ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags setup-nas-for-backups
             """
         }
