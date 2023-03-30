@@ -1,7 +1,7 @@
 pipeline {
   agent { 
         dockerfile{ 
-          args '-v /home/pi/.ssh:/home/pi/.ssh:ro'
+          args '-v /home/pi/.ssh:/var/jenkins_home/workspace/home-services-ansible-automaton/.ssh:ro'
         }
   }
   environment {
@@ -18,7 +18,7 @@ pipeline {
             whoami
             ls -al ~
             ls -al ~/.ssh
-            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags setup-nas-for-backups
+            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags setup-nas-for-backups --private-key /home/pi/.ssh/ed25519_backup_pi
             """
         }
       }
