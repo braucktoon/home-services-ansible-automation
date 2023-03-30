@@ -1,7 +1,7 @@
 pipeline {
   agent { 
         dockerfile{ 
-          args '-v /home/pi/.ssh:/var/jenkins_home/workspace/home-services-ansible-automaton/.ssh:ro'
+          args '-v /home/pi/.ssh:/home/pi/.ssh:ro'
         }
   }
   environment {
