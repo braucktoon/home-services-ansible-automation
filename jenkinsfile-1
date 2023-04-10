@@ -18,7 +18,7 @@ pipeline {
             whoami
             ls -al ~
             ls -al ~/.ssh
-            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" site.yml --tags setup-nas-for-backups --private-key /home/pi/.ssh/ed25519_backup_pi
+            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/ed25519_backup_pi
             """
         }
       }

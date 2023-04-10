@@ -1,8 +1,6 @@
 ---
 #TODO: need to capture docker group and pass into container
 
-#TODO: need generate ssh keys that can go into the container for the jenkins host.
-
 - name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
     name: "{{container_name}}"

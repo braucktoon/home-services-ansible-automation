@@ -1,0 +1,8 @@
+---
+- name: biggie
+  hosts: [biggie]
+  become: true
+
+  roles:
+      - role: jenkins
+        tags: [ jenkins ]

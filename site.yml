@@ -1,19 +1,7 @@
 ---
-- name: setup nas for backups
-  hosts: [nas]
-  
-  roles:
-      - role: setup-nas-for-backups
-        tags: [setup-nas-for-backups]
-
-- name: process service hosts
+- name: base build
   hosts: [service_hosts]
   become: true
-
-  vars:
-    username: pi
-    docker_dir: /data
-    backups_dir: /backups
 
   roles:
       - role: security
@@ -22,29 +10,3 @@
         tags: [ nut-client ]
       - role: docker
         tags: [ docker ]
-      - role: node-exporter
-        tags: [ node-exporter ]
-      - role: portainer
-        tags: [ portainer ]
-      - role: portainer-agent
-        tags: [ portainer-agent ]
-      - role: pihole
-        tags: [ pihole ]
-      - role: cloudflared
-        tags: [ cloudflared ]
-      - role: home-assistant
-        tags: [ home-assistant ]
-      - role: zigbee2mqtt
-        tags: [ zigbee2mqtt ]
-      - role: mosquitto
-        tags: [ mosquitto ]
-      - role: heimdall
-        tags: [ heimdall ]
-      - role: uptime-kuma
-        tags: [ uptime-kuma ]
-      - role: scrypted
-        tags: [ scrypted ]
-      - role: jenkins
-        tags: [ jenkins ]
-
-

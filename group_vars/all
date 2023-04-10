@@ -1,0 +1,4 @@
+---
+username: pi
+docker_dir: /data
+backups_dir: /backups

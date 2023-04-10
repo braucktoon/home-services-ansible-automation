@@ -1,0 +1,52 @@
+---
+- name: node-exporter
+  hosts: [gomey,floof,biggie]
+  become: true
+
+  roles:
+      - role: node-exporter
+        tags: [ node-exporter ]
+
+  # pihole mostly
+- name: gomey
+  hosts: [gomey]
+  become: true
+  
+  roles:
+      - role: pihole
+        tags: [ pihole ]
+      - role: heimdall
+        tags: [ heimdall ]
+
+  # home automation server.
+- name: floof
+  hosts: [floof]
+  become: true
+  
+  roles:
+      - role: home-assistant
+        tags: [ home-assistant ]
+      - role: zigbee2mqtt
+        tags: [ zigbee2mqtt ]
+      - role: mosquitto
+        tags: [ mosquitto ]
+      - role: scrypted
+        tags: [ scrypted ]
+
+  # Jenkins server with node-exporter and cloudflared, Jenkins does not get updated via CD pipline so not in this host.
+- name: biggie
+  hosts: [biggie]
+  become: true
+
+  roles:
+      - role: cloudflared
+        tags: [ cloudflared ]
+
+  # Monitoring services mostly, TODO: merge in internet-pi from geerling
+- name: lola
+  hosts: [lola]
+  become: true
+
+  roles:
+      - role: uptime-kuma
+        tags: [ uptime-kuma ]

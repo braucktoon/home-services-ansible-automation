@@ -1,0 +1,7 @@
+---
+- name: setup nas for backups
+  hosts: [nas]
+  
+  roles:
+      - role: setup-nas-for-backups
+        tags: [setup-nas-for-backups]
