@@ -16,8 +16,26 @@ Host fluff
     IdentitiesOnly yes
     User pi
     Port 22
-Host pihole
+Host gomey
     HostName 10.0.0.5
+    IdentityFile ~/.ssh/{{ssh_key_filename}}
+    IdentitiesOnly yes
+    User pi
+    Port 22
+Host floof
+    HostName 10.0.0.7
+    IdentityFile ~/.ssh/{{ssh_key_filename}}
+    IdentitiesOnly yes
+    User pi
+    Port 22
+Host lola
+    HostName 10.0.0.8
+    IdentityFile ~/.ssh/{{ssh_key_filename}}
+    IdentitiesOnly yes
+    User pi
+    Port 22
+Host biggie
+    HostName 10.0.0.9
     IdentityFile ~/.ssh/{{ssh_key_filename}}
     IdentitiesOnly yes
     User pi
