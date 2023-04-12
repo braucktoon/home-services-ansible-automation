@@ -15,6 +15,7 @@ pipeline {
             env.HOME = env.WORKSPACE
 
             sh """
+            ansible --version
             whoami
             ls -al ~
             ls -al /home/pi/.ssh/ed25519_backup_pi
