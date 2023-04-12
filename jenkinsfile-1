@@ -17,6 +17,7 @@ pipeline {
             sh """
             whoami
             ls -al ~
+            ls -al /home/pi/.ssh/ed25519_backup_pi
             ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/ed25519_backup_pi
             """
         }
