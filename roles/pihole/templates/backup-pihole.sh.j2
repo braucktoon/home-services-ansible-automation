@@ -6,5 +6,5 @@ BACKUP_CMD="pihole -a -t $DEST_FILE"
 docker exec {{container_name}} $BACKUP_CMD
 docker cp {{container_name}}:$DEST_FILE $DEST_FOLDER/$DEST_FILE
 /bin/gzip $DEST_FOLDER/$DEST_FILE
-/usr/bin/find $DEST_FOLDER -mtime +14 -delete
+/usr/bin/find $DEST_FOLDER -mtime +98 -delete
 rsync -auvz --delete $DEST_FOLDER/ nas:/volume1/backups/{{container_name}}

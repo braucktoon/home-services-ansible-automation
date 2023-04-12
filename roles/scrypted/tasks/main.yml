@@ -36,7 +36,7 @@
 
 - name: Copy backup script file in place.
   template:
-    src: "backup-{{container_name}}.sh.j2"
+    src: "templates/backup-basic-docker.sh.j2"
     dest: "/usr/local/bin/backup-{{container_name}}.sh"
     owner: root
     group: root

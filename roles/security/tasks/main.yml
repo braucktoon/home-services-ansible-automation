@@ -165,6 +165,8 @@
   local_action: "ansible.builtin.command ssh-copy-id -i ~/.ssh/{{ssh_key_filename}}.pub {{nas_user}}@{{nas_host}}"
   become: false
 
+#TODO: copy hosts into known_hosts, https://docs.ansible.com/ansible/latest/collections/ansible/builtin/known_hosts_module.html
+
 - name: Copy ssh config file into place.
   template:
     src: "config.j2"

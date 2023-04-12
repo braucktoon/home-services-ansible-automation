@@ -4,8 +4,8 @@ DEST_FOLDER='{{backups_dir}}/{{container_name}}'
 DEST_FILE="{{container_name}}-backup-$(date +'%F_%R').tar"
 BACKUP_CMD="/bin/tar -rvf"
 docker stop {{container_name}}
-sudo $BACKUP_CMD $DEST_FOLDER/$DEST_FILE /var/jenkins_home
+sudo $BACKUP_CMD $DEST_FOLDER/$DEST_FILE {{docker_dir}}/{{container_name}}
 docker start {{container_name}}
 /bin/gzip $DEST_FOLDER/$DEST_FILE
-/usr/bin/find $DEST_FOLDER -mtime +14 -delete
+/usr/bin/find $DEST_FOLDER -mtime +98 -delete
 rsync -auvz --delete $DEST_FOLDER/ nas:/volume1/backups/{{container_name}}
