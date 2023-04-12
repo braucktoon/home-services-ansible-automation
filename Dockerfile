@@ -4,7 +4,7 @@ RUN apk update
 RUN apk add ansible
 RUN apk add python3-dev py3-pip
 RUN apk add openssh
-RUN apk add docker
+RUN apk add python3-docker
 
 ARG UNAME=pi
 ARG UID=1000
