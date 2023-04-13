@@ -13,8 +13,6 @@ RUN adduser -u $UID -G $UNAME -h /home/$UNAME -D $UNAME
 
 USER $UNAME
 
-RUN ansible-galaxy collection install community.docker
-
 RUN mkdir -p /home/$UNAME/.ssh && \
     chmod 0700 /home/$UNAME/.ssh
 
