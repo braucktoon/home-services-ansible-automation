@@ -4,7 +4,6 @@ RUN apk update
 RUN apk add ansible
 RUN apk add python3-dev py3-pip
 RUN apk add openssh
-RUN pip install docker
 
 ARG UNAME=pi
 ARG UID=1000
@@ -13,6 +12,8 @@ RUN addgroup -g $GID $UNAME
 RUN adduser -u $UID -G $UNAME -h /home/$UNAME -D $UNAME
 
 USER $UNAME
+
+RUN ansible-galaxy collection install community.docker
 
 RUN mkdir -p /home/$UNAME/.ssh && \
     chmod 0700 /home/$UNAME/.ssh
