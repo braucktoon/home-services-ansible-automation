@@ -2,7 +2,7 @@
 
 site.yml, an ansible playbook that secures my raspberry pis, installs docker, and NUT client via ansible roles
 <p>
-cd-services.yml, an ansible playbok that sets up my home services via ansible roles
+cd-services.yml, an ansible playbook that sets up my home services via ansible roles
 <p>
 nas.yml, an ansible playbook that sets up backup shares on my synology via ansible roles
 <p>
