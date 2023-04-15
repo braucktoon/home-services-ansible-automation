@@ -4,6 +4,8 @@ RUN apk update
 RUN apk add ansible
 RUN apk add python3-dev py3-pip
 RUN apk add openssh
+RUN apk add git
+RUN apk add rsync
 
 ARG UNAME=pi
 ARG UID=1000
