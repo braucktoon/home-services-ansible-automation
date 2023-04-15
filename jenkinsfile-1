@@ -21,7 +21,7 @@ pipeline {
             ls -al /home/pi/.ssh/ed25519_backup_pi
             ansible-galaxy collection install community.docker
             ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/ed25519_backup_pi
-            mkdir ~/internet-pi-src
+            mkdir -p ~/internet-pi-src
             git clone https://github.com/geerlingguy/internet-pi.git ~/internet-pi-src/
             cp -r ~/internet-pi/config.yml ~/internet-pi-src/
             cp -r ~/internet-pi/inventory.ini ~/internet-pi-src/
