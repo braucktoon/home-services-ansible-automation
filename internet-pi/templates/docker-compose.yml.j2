@@ -54,7 +54,7 @@ services:
 {% endif %}
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:9.4.7
     restart: always
     volumes:
       - grafana_data:/var/lib/grafana
@@ -83,7 +83,7 @@ services:
       - 9115
     ports:
       - 9115:9115
-    image: prom/blackbox-exporter
+    image: prom/blackbox-exporter:v0.23.0
     restart: always
     volumes:
       - ./blackbox/config:/config
@@ -97,14 +97,14 @@ services:
       - 9798
     ports:
       - 9798:9798
-    image: miguelndecarvalho/speedtest-exporter
+    image: miguelndecarvalho/speedtest-exporter:v3.5.3
     restart: always
     networks:
       - back-tier
 
   nodeexp:
     privileged: true
-    image: prom/node-exporter
+    image: prom/node-exporter:v1.5.0
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
