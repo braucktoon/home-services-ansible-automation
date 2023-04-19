@@ -6,6 +6,8 @@
   roles:
       - role: node-exporter
         tags: [ node-exporter ]
+      - role: portainer-agent
+        tags: [ portainer-agent ]
 
   # pihole mostly
 - name: gomey
@@ -50,3 +52,5 @@
   roles:
       - role: uptime-kuma
         tags: [ uptime-kuma ]
+      - role: portainer
+        tags: [ portainer ]
