@@ -20,6 +20,8 @@
     image: jenkins/jenkins:2.401-jdk11
     pull: yes
     state: "started"
+    env:
+      JAVA_OPTS: "-Dorg.apache.commons.jelly.tags.fmt.timeZone=America/New_York -Duser.timezone=America/New_York"
     groups:
       - "{{grpid.gid}}"
     ports:
