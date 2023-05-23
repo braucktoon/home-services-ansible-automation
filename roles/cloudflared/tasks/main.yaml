@@ -2,7 +2,7 @@
 - name: Make sure the cloud-flared container is created and running
   community.general.docker_container:
     name: "cloudflared-tunnel"
-    image: cloudflare/cloudflared:2023.5.0
+    image: cloudflare/cloudflared:2023.5.1
     pull: yes
     state: "started"
     command:
