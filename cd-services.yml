@@ -35,15 +35,6 @@
       - role: scrypted
         tags: [ scrypted ]
 
-  # Jenkins server with node-exporter and cloudflared, Jenkins does not get updated via CD pipline so not in this host.
-- name: biggie
-  hosts: [biggie]
-  become: true
-
-  roles:
-      - role: cloudflared
-        tags: [ cloudflared ]
-
   # Monitoring services mostly, TODO: merge in internet-pi from geerling
 - name: lola
   hosts: [lola]
@@ -54,3 +45,5 @@
         tags: [ uptime-kuma ]
       - role: portainer
         tags: [ portainer ]
+      - role: proxy
+        tags: [ proxy ]
