@@ -7,3 +7,4 @@ backup_dirs:
   - '/volume1/backups/uptime-kuma'  
   - '/volume1/backups/scrypted'
   - '/volume1/backups/heimdall'
+  - '/volume1/backups/nginx-proxy-manager'
