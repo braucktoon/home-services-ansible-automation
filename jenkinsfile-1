@@ -32,6 +32,7 @@ pipeline {
             ansible-playbook --vault-password-file "$VAULT_PW" main.yml --private-key /home/pi/.ssh/ed25519_backup_pi
             """
         }
+        emailext attachLog: true, body: '', subject: '$PROJECT_NAME - Build # $BUILD_NUMBER - $BUILD_STATUS!', to: '$DEFAULT_RECIPIENTS'
       }
     }
   }

@@ -1,0 +1,36 @@
+---
+
+- name: Create the {{plex_container_name}} config folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{plex_container_name}}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ usergroup }}"
+    mode: 0755
+
+- name: Create the {{qbt_container_name}} config folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{qbt_container_name}}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ usergroup }}"
+    mode: 0755
+
+- name: Create the {{prowlarr_container_name}} config folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{prowlarr_container_name}}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ usergroup }}"
+    mode: 0755
+
+- name: Copy docker-compose.yml file in place.
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ docker_dir }}//docker-compose.yml"
+
+- name: Ensure the media services are running.
+  community.docker.docker_compose:
+    project_src: "{{ docker_dir }}/"
+    build: false
+  become: false

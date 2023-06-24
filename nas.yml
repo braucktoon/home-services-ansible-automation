@@ -5,3 +5,10 @@
   roles:
       - role: setup-nas-for-backups
         tags: [setup-nas-for-backups]
+
+- name: Setup media services
+  hosts: [nas]
+  
+  roles:
+      - role: media
+        tags: [media]

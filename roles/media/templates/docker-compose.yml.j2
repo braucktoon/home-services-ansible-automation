@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: {{gluetun_container_name}}
+    cap_add:
+      - NET_ADMIN
+    ports:
+        # QBT UI Port
+        - 8080:8080
+        # Prowlarr port
+        - 9696:9696
+    environment:
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY={{WIREGUARD_PRIVATE_KEY}}
+      - WIREGUARD_ADDRESSES=10.64.120.124/32
+      - SERVER_CITIES=Zurich
+
+  prowlarr:
+    container_name: prowlarr
+    image: cr.hotio.dev/hotio/prowlarr
+    container_name: {{prowlarr_container_name}}
+    environment:
+      - PUID=1026
+      - PGID=100
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - {{docker_dir}}/{{prowlarr_container_name}}/config:/config
+    network_mode: service:gluetun
+    depends_on:
+      - gluetun
+      - qbittorrent
+
+  qbittorrent:
+    container_name: qbittorrent
+    container_name: {{qbt_container_name}}
+    image: cr.hotio.dev/hotio/qbittorrent
+    environment:
+      - PUID=1026
+      - PGID=100
+      - UMASK=002
+      - TZ=America/New_York
+    volumes:
+      - {{docker_dir}}/{{qbt_container_name}}/config:/config
+      - {{docker_dir}}/{{qbt_container_name}}/media:/app/qBittorrent/downloads
+    network_mode: service:gluetun
+
+  plex:
+    container_name: plex
+    image: cr.hotio.dev/hotio/plex
+    container_name: {{plex_container_name}}
+    ports:
+      - "32400:32400"
+    environment:
+      - PUID=1026
+      - PGID=100
+      - UMASK=002
+      - TZ=America/New_York
+      - PLEX_CLAIM="claim-xDFjSks-UiKjNEmE58Yy"
+      - ADVERTISE_IP="http://10.0.0.2:32400"
+      - ALLOWED_NETWORKS
+      - PLEX_PASS=no
+    volumes:
+      - {{docker_dir}}/{{plex_container_name}}/config:/config
+      - {{docker_dir}}/{{plex_container_name}}/transcode:/transcode
+      - {{plex_movies_dir}}:/movies
+      - {{plex_tv_dir}}:/tv
+      - {{plex_kids_dir}}:/kids
+      - {{plex_holiday_dir}}:/holiday-movies
