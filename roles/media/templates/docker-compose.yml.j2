@@ -13,6 +13,8 @@ services:
         - 8080:8080
         # Prowlarr port
         - 9696:9696
+        # Sonarr port
+        - 8989:8989
     environment:
       - VPN_SERVICE_PROVIDER=mullvad
       - VPN_TYPE=wireguard
@@ -35,6 +37,7 @@ services:
     depends_on:
       - gluetun
       - qbittorrent
+      - sonarr
 
   qbittorrent:
     container_name: {{qbt_container_name}}
@@ -61,7 +64,7 @@ services:
       - PGID=100
       - UMASK=002
       - TZ=America/New_York
-      - PLEX_CLAIM="claim-xDFjSks-UiKjNEmE58Yy"
+      - PLEX_CLAIM="{{plex_claim}}"
       - ADVERTISE_IP="http://10.0.0.2:32400"
       - ALLOWED_NETWORKS
       - PLEX_PASS=no
@@ -81,3 +84,17 @@ services:
     volumes:
       - /volume1/@docker/volumes:/var/lib/docker/volumes
       - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  sonarr:
+      container_name: {{sonarr_container_name}}
+      image: hotio/sonarr:release-3.0.10.1567
+      environment:
+        - PUID=1026
+        - PGID=100
+        - UMASK=002
+        - TZ=America/New_York
+      volumes:
+        - {{docker_dir}}/{{sonarr_container_name}}/config:/config
+        - {{plex_tv_dir}}:/tv
+        - {{docker_dir}}/{{qbt_container_name}}/media:/media-downloads
+      network_mode: service:gluetun
