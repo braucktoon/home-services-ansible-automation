@@ -2,7 +2,7 @@
 10.0.0.5 ansible_user=pi
 
 [nas]
-10.0.0.2 ansible_user=dmcgough
+10.0.0.2 ansible_user=dmcgough ansible_python_interpreter=/volume1/\@appstore/python38/bin/python3
 
 [floof]
 10.0.0.7 ansible_user=pi

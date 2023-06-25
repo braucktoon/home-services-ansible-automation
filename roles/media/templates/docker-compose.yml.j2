@@ -3,7 +3,8 @@ version: "3.7"
 services:
 
   gluetun:
-    image: qmcgaw/gluetun
+    image: qmcgaw/gluetun:v3.34.3
+    restart: unless-stopped
     container_name: {{gluetun_container_name}}
     cap_add:
       - NET_ADMIN
@@ -20,8 +21,8 @@ services:
       - SERVER_CITIES=Zurich
 
   prowlarr:
-    container_name: prowlarr
-    image: cr.hotio.dev/hotio/prowlarr
+    image: hotio/prowlarr:release-1.5.2.3484
+    restart: unless-stopped
     container_name: {{prowlarr_container_name}}
     environment:
       - PUID=1026
@@ -36,9 +37,9 @@ services:
       - qbittorrent
 
   qbittorrent:
-    container_name: qbittorrent
     container_name: {{qbt_container_name}}
-    image: cr.hotio.dev/hotio/qbittorrent
+    restart: unless-stopped
+    image: hotio/qbittorrent:release-4.5.4
     environment:
       - PUID=1026
       - PGID=100
@@ -50,8 +51,8 @@ services:
     network_mode: service:gluetun
 
   plex:
-    container_name: plex
-    image: cr.hotio.dev/hotio/plex
+    image: hotio/plex:release-1.32.4.7195-7c8f9d3b6
+    restart: unless-stopped
     container_name: {{plex_container_name}}
     ports:
       - "32400:32400"
@@ -71,3 +72,12 @@ services:
       - {{plex_tv_dir}}:/tv
       - {{plex_kids_dir}}:/kids
       - {{plex_holiday_dir}}:/holiday-movies
+
+  portainer-agent:
+    image: portainer/agent
+    restart: unless-stopped
+    ports:
+      - "9001:9001"
+    volumes:
+      - /volume1/@docker/volumes:/var/lib/docker/volumes
+      - /var/run/docker.sock:/var/run/docker.sock:ro
