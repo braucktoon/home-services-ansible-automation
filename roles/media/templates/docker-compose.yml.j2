@@ -1,5 +1,16 @@
 version: "3.7"
 
+networks:
+  media:
+    name: media
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: "10.0.0.0/24"
+          gateway: "10.0.0.1"
+
 services:
 
   gluetun:
@@ -13,14 +24,15 @@ services:
         - 8080:8080
         # Prowlarr port
         - 9696:9696
-        # Sonarr port
-        - 8989:8989
     environment:
       - VPN_SERVICE_PROVIDER=mullvad
       - VPN_TYPE=wireguard
       - WIREGUARD_PRIVATE_KEY={{WIREGUARD_PRIVATE_KEY}}
       - WIREGUARD_ADDRESSES=10.64.120.124/32
       - SERVER_CITIES=Zurich
+    networks:
+      media:
+        ipv4_address: 10.0.0.3
 
   prowlarr:
     image: hotio/prowlarr:release-1.5.2.3484
@@ -37,7 +49,6 @@ services:
     depends_on:
       - gluetun
       - qbittorrent
-      - sonarr
 
   qbittorrent:
     container_name: {{qbt_container_name}}
@@ -65,7 +76,7 @@ services:
       - UMASK=002
       - TZ=America/New_York
       - PLEX_CLAIM="{{plex_claim}}"
-      - ADVERTISE_IP="http://10.0.0.2:32400"
+      - ADVERTISE_IP="http://10.0.0.10:32400"
       - ALLOWED_NETWORKS
       - PLEX_PASS=no
     volumes:
@@ -75,6 +86,9 @@ services:
       - {{plex_tv_dir}}:/tv
       - {{plex_kids_dir}}:/kids
       - {{plex_holiday_dir}}:/holiday-movies
+    networks:
+      media:
+        ipv4_address: 10.0.0.10
 
   portainer-agent:
     image: portainer/agent
@@ -97,4 +111,8 @@ services:
         - {{docker_dir}}/{{sonarr_container_name}}/config:/config
         - {{plex_tv_dir}}:/tv
         - {{docker_dir}}/{{qbt_container_name}}/media:/media-downloads
-      network_mode: service:gluetun
+      ports:
+        - 8989:8989
+      networks:
+        media:
+          ipv4_address: 10.0.0.11
