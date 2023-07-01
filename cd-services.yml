@@ -47,3 +47,10 @@
         tags: [ portainer ]
       - role: proxy
         tags: [ proxy ]
+
+- name: Setup media services
+  hosts: [nas]
+  
+  roles:
+      - role: media
+        tags: [media]
