@@ -54,3 +54,12 @@
   roles:
       - role: media
         tags: [media]
+
+- name: Docker System Prune
+  hosts: [service_hosts,nas]
+  become: false
+
+  roles:
+      - role: prune
+        tags: [ prune ]
+
