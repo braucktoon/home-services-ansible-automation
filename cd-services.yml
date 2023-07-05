@@ -55,11 +55,4 @@
       - role: media
         tags: [media]
 
-- name: Docker System Prune
-  hosts: [lola,floof,gomey,nas]
-  become: false
-
-  roles:
-      - role: prune
-        tags: [ prune ]
 
