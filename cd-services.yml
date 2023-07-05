@@ -56,7 +56,7 @@
         tags: [media]
 
 - name: Docker System Prune
-  hosts: [service_hosts,nas]
+  hosts: [lola,floof,gomey,nas]
   become: false
 
   roles:
