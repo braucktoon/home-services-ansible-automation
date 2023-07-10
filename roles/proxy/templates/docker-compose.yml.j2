@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   nginx-proxy-manager:
-    image: 'jc21/nginx-proxy-manager@sha256:202c5a1ee1a72f3fa71bc66c65e34b5e991a85759756c88e3edd483243e1c19f'
+    image: 'jc21/nginx-proxy-manager:2.10.3'
     container_name: {{container_name}}
     restart: unless-stopped
     ports:
