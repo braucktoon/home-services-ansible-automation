@@ -10,7 +10,8 @@
         "(?:image: )(?<depName>.*?)(?::(?<currentValue>.*?))?(?:@(?<currentDigest>sha256:[a-f0-9]+))?\\n"
       ],
       "datasourceTemplate": "docker",
-      "versioningTemplate": "docker"
+      "versioningTemplate": "docker",
+      "extractVersion": "^(v|release-)?(?<version>.*)$"
     }
   ],
   "packageRules": [
@@ -18,8 +19,7 @@
       "matchUpdateTypes": ["patch","minor","digest"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
-      "ignoreTests": true,
-      "extractVersion": "^(v|release-)?(?<version>.*)$"
+      "ignoreTests": true
     },
     {
       "matchDepTypes": ["devDependencies"],
