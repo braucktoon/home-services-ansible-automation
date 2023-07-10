@@ -16,6 +16,13 @@
   ],
   "packageRules": [
     {
+      "packagePatterns": [".*"],
+      "managers": ["regex"],
+      "extractVersion": "^(v|release-)?(?<version>.*)$"
+    }
+  ],
+  "packageRules": [
+    {
       "matchUpdateTypes": ["patch","minor","digest"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
