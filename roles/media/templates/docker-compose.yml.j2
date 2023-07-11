@@ -35,7 +35,7 @@ services:
         ipv4_address: 10.0.0.3
 
   prowlarr:
-    image: hotio/prowlarr:release-1.6.3.3608
+    image: hotio/prowlarr@sha256:e645e402b8f290822bcfc11437be0b0a43377ac29c95ef2774e718e4f3953d11
     restart: unless-stopped
     container_name: {{prowlarr_container_name}}
     environment:
@@ -53,7 +53,7 @@ services:
   qbittorrent:
     container_name: {{qbt_container_name}}
     restart: unless-stopped
-    image: hotio/qbittorrent:release-4.5.4
+    image: hotio/qbittorrent@sha256:e48b654590b63a45b138a30f79960b262fc772647a8967837ba2503ce54256e9
     environment:
       - PUID=1026
       - PGID=100
@@ -65,7 +65,7 @@ services:
     network_mode: service:gluetun
 
   plex:
-    image: hotio/plex:release-1.32.4.7195-7c8f9d3b6
+    image: hotio/plex@sha256:ff9ebbaaf7b3a68c09db99fb8457c45720c783696ec5197109faf0786c45fdcc
     restart: unless-stopped
     container_name: {{plex_container_name}}
     ports:
@@ -101,15 +101,19 @@ services:
 
   sonarr:
       container_name: {{sonarr_container_name}}
-      image: ghcr.io/onedr0p/sonarr:3.0.10.1567
+      image: hotio/sonarr@sha256:510cae484504d44e78bb8bbe970e0db558bcc48194fb6d807d81ef201cc5fd02
       environment:
-        - SONARR__PORT=8989
-        - SONARR__APPLICATION_URL="https://sonarr.mchouseface.com/"
-        - TZ=America/New_York
+        - PUID=1026
+        - PGID=100
+        - UMASK=002
       volumes:
         - {{docker_dir}}/{{sonarr_container_name}}/config:/config
         - {{plex_tv_dir}}:/tv
         - {{docker_dir}}/{{qbt_container_name}}/media:/media-downloads
+      ports:
+        - 8989:8989
       networks:
         media:
           ipv4_address: 10.0.0.11
+
+

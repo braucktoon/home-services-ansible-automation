@@ -23,11 +23,6 @@
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true
-    },
-    {
-      "packagePatterns": [".*"],
-      "managers": ["regex"],
-      "extractVersion": "^(v|release-)?(?<version>.*)$"
     }
   ],
   "platformAutomerge": true
