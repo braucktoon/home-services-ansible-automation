@@ -101,18 +101,15 @@ services:
 
   sonarr:
       container_name: {{sonarr_container_name}}
-      image: hotio/sonarr:release-3.0.10.1567
+      image: ghcr.io/onedr0p/sonarr:3.0.10.1567
       environment:
-        - PUID=1026
-        - PGID=100
-        - UMASK=002
+        - SONARR__PORT=8989
+        - SONARR__APPLICATION_URL="https://sonarr.mchouseface.com/"
         - TZ=America/New_York
       volumes:
         - {{docker_dir}}/{{sonarr_container_name}}/config:/config
         - {{plex_tv_dir}}:/tv
         - {{docker_dir}}/{{qbt_container_name}}/media:/media-downloads
-      ports:
-        - 8989:8989
       networks:
         media:
           ipv4_address: 10.0.0.11
