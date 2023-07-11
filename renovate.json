@@ -15,13 +15,6 @@
   ],
   "packageRules": [
     {
-      "packagePatterns": [".*"],
-      "managers": ["regex"],
-      "extractVersion": "^(v|release-)?(?<version>.*)$"
-    }
-  ],
-  "packageRules": [
-    {
       "matchUpdateTypes": ["patch","minor","digest"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
@@ -30,6 +23,11 @@
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true
+    },
+    {
+      "packagePatterns": [".*"],
+      "managers": ["regex"],
+      "extractVersion": "^(v|release-)?(?<version>.*)$"
     }
   ],
   "platformAutomerge": true
