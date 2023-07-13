@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  {{container_name}}:
+    image: 'vaultwarden/server:1.29.0'
+    container_name: {{container_name}}
+    restart: unless-stopped
+    ports:
+      - '82:80'
+    volumes:
+      - {{ docker_dir }}/{{container_name}}/data:/data/
+      

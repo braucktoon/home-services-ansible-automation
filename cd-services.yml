@@ -47,6 +47,8 @@
         tags: [ portainer ]
       - role: proxy
         tags: [ proxy ]
+      - role: vaultwarden
+        tags: [ vaultwarden ]
 
 - name: Setup media services
   hosts: [nas]
