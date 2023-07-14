@@ -65,7 +65,7 @@ services:
     network_mode: service:gluetun
 
   plex:
-    image: hotio/plex@sha256:ff9ebbaaf7b3a68c09db99fb8457c45720c783696ec5197109faf0786c45fdcc
+    image: hotio/plex@sha256:22ee11339a05b2f1aa4b216eccbbdda81fba20f392e94d0861c344317872bd68
     restart: unless-stopped
     container_name: {{plex_container_name}}
     ports:
