@@ -35,14 +35,13 @@ services:
         ipv4_address: 10.0.0.3
 
   prowlarr:
-    image: hotio/prowlarr@sha256:e645e402b8f290822bcfc11437be0b0a43377ac29c95ef2774e718e4f3953d11
+    image: ghcr.io/onedr0p/prowlarr:1.6.3.3608
+    user: "1026:100"
     restart: unless-stopped
     container_name: {{prowlarr_container_name}}
     environment:
-      - PUID=1026
-      - PGID=100
-      - UMASK=002
-      - TZ=America/New_York
+        - TZ=America/New_York
+        - PROWLARR__PORT=9696
     volumes:
       - {{docker_dir}}/{{prowlarr_container_name}}/config:/config
     network_mode: service:gluetun
@@ -52,20 +51,18 @@ services:
 
   qbittorrent:
     container_name: {{qbt_container_name}}
+    user: "1026:100"
     restart: unless-stopped
-    image: hotio/qbittorrent@sha256:73b4fcbd6decbd38f090d6acc83d5d18be62986e8ffeeb469a5fb10ceb7c1c82
+    image: hotio/qbittorrent@sha256:e48b654590b63a45b138a30f79960b262fc772647a8967837ba2503ce54256e9
     environment:
-      - PUID=1026
-      - PGID=100
-      - UMASK=002
-      - TZ=America/New_York
+      - QBITTORRENT__PORT=8080
     volumes:
       - {{docker_dir}}/{{qbt_container_name}}/config:/config
       - {{docker_dir}}/{{qbt_container_name}}/media:/app/qBittorrent/downloads
     network_mode: service:gluetun
 
   plex:
-    image: hotio/plex@sha256:22ee11339a05b2f1aa4b216eccbbdda81fba20f392e94d0861c344317872bd68
+    image: hotio/plex@sha256:ff9ebbaaf7b3a68c09db99fb8457c45720c783696ec5197109faf0786c45fdcc
     restart: unless-stopped
     container_name: {{plex_container_name}}
     ports:
@@ -101,11 +98,12 @@ services:
 
   sonarr:
       container_name: {{sonarr_container_name}}
-      image: hotio/sonarr@sha256:510cae484504d44e78bb8bbe970e0db558bcc48194fb6d807d81ef201cc5fd02
+      image: ghcr.io/onedr0p/sonarr:3.0.10.1567
+      user: "1026:100"
       environment:
-        - PUID=1026
-        - PGID=100
-        - UMASK=002
+        - SONARR__PORT=8989
+        - SONARR__APPLICATION_URL="https://sonarr.mchouseface.com/"
+        - TZ=America/New_York
       volumes:
         - {{docker_dir}}/{{sonarr_container_name}}/config:/config
         - {{plex_tv_dir}}:/tv
