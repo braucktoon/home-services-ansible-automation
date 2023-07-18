@@ -1,0 +1,8 @@
+---
+- name: prune
+  hosts: [service_hosts, nas]
+  become: false
+
+  roles:
+      - role: prune
+        tags: [ prune ]
