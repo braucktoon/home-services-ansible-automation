@@ -24,6 +24,8 @@ services:
         - 8080:8080
         # Prowlarr port
         - 9696:9696
+        # sabnzbd port
+        - 9090
     environment:
       - VPN_SERVICE_PROVIDER=mullvad
       - VPN_TYPE=wireguard
@@ -48,6 +50,7 @@ services:
     depends_on:
       - gluetun
       - qbittorrent
+      - sabnzbd
 
   qbittorrent:
     container_name: {{qbt_container_name}}
@@ -58,7 +61,7 @@ services:
       - QBITTORRENT__PORT=8080
     volumes:
       - {{docker_dir}}/{{qbt_container_name}}/config:/config
-      - {{docker_dir}}/{{qbt_container_name}}/media:/app/qBittorrent/downloads
+      - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
     network_mode: service:gluetun
 
   portainer-agent:
@@ -81,11 +84,25 @@ services:
       volumes:
         - {{docker_dir}}/{{sonarr_container_name}}/config:/config
         - {{plex_tv_dir}}:/tv
-        - {{docker_dir}}/{{qbt_container_name}}/media:/media-downloads
+        - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
+        - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
       ports:
         - 8989:8989
       networks:
         media:
           ipv4_address: 10.0.0.11
-
+  
+  sabnzbd:
+      container_name: {{sabnzbd_container_name}}
+      image: ghcr.io/onedr0p/sabnzbd:4.0.3
+      user: "1026:100"
+      environment:
+        - SABNZBD__PORT=9090
+      volumes:
+        - {{docker_dir}}/{{sabnzbd_container_name}}/config:/config
+        - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
+        - {{docker_dir}}/{{nzb_incomplete_downloads}}:/nzb-incomplete-downloads
+      networks:
+        media:
+          ipv4_address: 10.0.0.12
 
