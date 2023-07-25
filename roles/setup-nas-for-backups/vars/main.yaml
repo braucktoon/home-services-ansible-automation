@@ -9,3 +9,5 @@ backup_dirs:
   - '/volume1/backups/heimdall'
   - '/volume1/backups/nginx-proxy-manager'
   - '/volume1/backups/vaultwarden'
+  - '/volume1/backups/sabnzbd'
+  - '/volume1/backups/jenkins'

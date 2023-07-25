@@ -102,6 +102,7 @@ services:
         - {{docker_dir}}/{{sabnzbd_container_name}}/config:/config
         - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
         - {{docker_dir}}/{{nzb_incomplete_downloads}}:/nzb-incomplete-downloads
+        - {{sabnzbd_backup_dir}}:/backups
       networks:
         media:
           ipv4_address: 10.0.0.12
