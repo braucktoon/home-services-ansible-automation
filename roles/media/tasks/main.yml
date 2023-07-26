@@ -48,6 +48,22 @@
     group: "{{ usergroup }}"
     mode: 0755
 
+- name: Create the {{sabnzbd_container_name}} config folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{sabnzbd_container_name}}/config"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ usergroup }}"
+    mode: 0755
+
+- name: Create the {{radarr_container_name}} config folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{radarr_container_name}}/config"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ usergroup }}"
+    mode: 0755
+
 - name: Copy docker-compose.yml file in place.
   template:
     src: "docker-compose.yml.j2"

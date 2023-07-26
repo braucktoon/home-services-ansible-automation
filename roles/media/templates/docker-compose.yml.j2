@@ -107,3 +107,17 @@ services:
         media:
           ipv4_address: 10.0.0.12
 
+  radarr:
+      container_name: {{radarr_container_name}}
+      image: ghcr.io/onedr0p/radarr:4.6.4.7568
+      user: "1026:100"
+      environment:
+        - RADARR__PORT=7878
+      volumes:
+        - {{docker_dir}}/{{radarr_container_name}}/config:/config
+        - {{plex_movies_dir}}:/movies
+        - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
+        - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
+      networks:
+        media:
+          ipv4_address: 10.0.0.13
