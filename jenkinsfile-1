@@ -13,9 +13,9 @@ pipeline {
         script {
             env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP
             env.HOME = env.WORKSPACE
+            sh 'printenv'
 
             sh """
-            sh 'printenv'
             ansible --version
             whoami
             ls -al ~
