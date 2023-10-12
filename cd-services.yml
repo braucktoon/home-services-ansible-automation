@@ -50,11 +50,13 @@
       - role: vaultwarden
         tags: [ vaultwarden ]
 
-- name: Setup media services
+- name: Setup NAS services
   hosts: [nas]
   
   roles:
       - role: media
         tags: [media]
+      - role: icloud-photos-sync
+        tags: [icloud-photos-sync]
 
 

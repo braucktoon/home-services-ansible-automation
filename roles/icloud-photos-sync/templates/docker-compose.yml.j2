@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+
+  {{dave_container_name}}:
+    image: steilerdev/icloud-photos-sync:1.2.0
+    container_name: {{dave_container_name}}
+    user: 1026:100 
+    environment:
+      APPLE_ID_USER: {{dave_user_name}}
+      APPLE_ID_PWD: {{dave_user_pw}}
+      TZ: "America/New_York"                                                       
+      PORT: "8181"
+    volumes:
+      - /volume1/backups/icloud-photos/sync/dave:/opt/icloud-photos-library
+
+  {{jeni_container_name}}:
+    image: steilerdev/icloud-photos-sync:1.2.0
+    container_name: {{jeni_container_name}}
+    user: 1026:100 
+    environment:
+      APPLE_ID_USER: {{jeni_user_name}}
+      APPLE_ID_PWD: {{jeni_user_pw}}
+      TZ: "America/New_York"                                                       
+      PORT: "8181"
+    volumes:
+      - /volume1/backups/icloud-photos/sync/jeni:/opt/icloud-photos-library  
