@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   {{dave_container_name}}:
-    image: steilerdev/icloud-photos-sync:1.2.0
+    image: steilerdev/icloud-photos-sync:1.3.0
     container_name: {{dave_container_name}}
     user: 1026:100 
     environment:
@@ -15,7 +15,7 @@ services:
       - /volume1/backups/icloud-photos/sync/dave:/opt/icloud-photos-library
 
   {{jeni_container_name}}:
-    image: steilerdev/icloud-photos-sync:1.2.0
+    image: steilerdev/icloud-photos-sync:1.3.0
     container_name: {{jeni_container_name}}
     user: 1026:100 
     environment:
