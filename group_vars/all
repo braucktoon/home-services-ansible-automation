@@ -1,4 +1,5 @@
 ---
 username: pi
+usergroup: pi
 docker_dir: /data
 backups_dir: /backups

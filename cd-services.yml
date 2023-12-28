@@ -34,6 +34,8 @@
         tags: [ mosquitto ]
       - role: scrypted
         tags: [ scrypted ]
+      - role: zwavejs
+        tags: [ zwavejs ]
 
   # Monitoring services mostly, TODO: merge in internet-pi from geerling
 - name: lola

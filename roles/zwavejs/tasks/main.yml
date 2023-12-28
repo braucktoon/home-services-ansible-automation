@@ -1,0 +1,20 @@
+---
+
+- name: Create the {{container_name}} config folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{container_name}}/config"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ usergroup }}"
+    mode: 0755
+
+- name: Copy docker-compose.yml file in place.
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ docker_dir }}/{{container_name}}/docker-compose.yml"
+
+- name: Ensure the  services are running.
+  community.docker.docker_compose:
+    project_src: "{{ docker_dir }}/{{container_name}}"
+    build: false
+  become: false
