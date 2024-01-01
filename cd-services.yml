@@ -58,7 +58,4 @@
   roles:
       - role: media
         tags: [media]
-      - role: icloud-photos-sync
-        tags: [icloud-photos-sync]
-
-
+        
