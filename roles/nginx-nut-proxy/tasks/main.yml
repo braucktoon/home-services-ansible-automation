@@ -1,0 +1,29 @@
+# Install nginx
+- name: Install nginx package.
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+  become: true
+
+- name: Ensure that nginx service is started and enabled on boot
+  service:
+    name: nginx
+    state: started
+    enabled: true
+  become: true
+
+- name: Ensure line is present in file
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    line: 'stream { server { listen 3493; proxy_pass 10.0.0.2:3493; } }'
+  become: true
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
+  become: true
+
+- ansible.builtin.include_role:
+    name: nut-client
+
