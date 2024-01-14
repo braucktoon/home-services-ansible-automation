@@ -1,7 +1,0 @@
----
-- name: test
-  hosts: [fluff]
-  
-  roles:
-      - role: nginx-nut-proxy
-        tags: [nginx-nut-proxy]
