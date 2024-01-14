@@ -10,7 +10,7 @@
 - name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
     name: "{{container_name}}"
-    image: koush/scrypted@sha256:9178ec3cc7a0a232d2fcd10b720f4204e310337f908d7922d3d77b1c606bde38
+    image: koush/scrypted@sha256:9b3f57f4f465df0adcc1cf730e5ec92dd61ba29a4025dca01396876b9bea9feb
     pull: yes
     state: "started"
     network_mode: host
