@@ -13,13 +13,15 @@
 [biggie]
 10.0.0.9 ansible_user=pi
 
+[nut-proxy]
+10.0.0.233 ansible_user=pi
+
 [service_hosts]
 10.0.0.5 ansible_user=pi
 10.0.0.7 ansible_user=pi
 10.0.0.8 ansible_user=pi
 10.0.0.9 ansible_user=pi
 
-[fluff]
-10.0.0.4 ansible_user=pi
+
 
 

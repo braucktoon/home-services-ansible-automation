@@ -24,6 +24,5 @@
     state: restarted
   become: true
 
-- ansible.builtin.include_role:
-    name: nut-client
+
 

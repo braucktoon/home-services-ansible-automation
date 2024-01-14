@@ -10,3 +10,15 @@
         tags: [ nut-client ]
       - role: docker
         tags: [ docker ]
+
+- name: build nut proxy service
+  hosts: [nut-proxy]
+  become: true
+
+  roles:
+      - role: security
+        tags: [ security ]
+      - role: nut-client
+        tags: [ nut-client ]
+      - role: nginx-nut-proxy
+        tags: [ nginx-nut-proxy ]
