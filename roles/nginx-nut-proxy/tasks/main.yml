@@ -24,5 +24,16 @@
     state: restarted
   become: true
 
+- name: Copy nut client configuration files in place.
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/nut/{{ item }}"
+    owner: root
+    group: nut
+    mode: 0600
+  with_items:
+    - upssched-cmd
+  notify: restart nut-client
+
 
 

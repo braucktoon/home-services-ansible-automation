@@ -13,6 +13,8 @@
 
 - name: build nut proxy service
   hosts: [nut-proxy]
+  handlers:
+  - import_tasks: roles/nut-client/handlers/main.yml
   become: true
 
   roles:
