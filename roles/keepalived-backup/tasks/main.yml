@@ -20,3 +20,8 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Restart keepalived
+  ansible.builtin.service:
+    name: keepalived
+    state: restarted
