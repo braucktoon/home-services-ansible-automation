@@ -1,0 +1,42 @@
+---
+- name: Install unbound package.
+  ansible.builtin.apt:
+    name: unbound
+    state: present
+  become: true
+ 
+- name: Copy unbound configuration file in place.
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/unbound/unbound.conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - pi-hole.conf
+  notify: restart unbound
+
+- name: Ensure that unbound service is started and enabled on boot
+  service:
+    name: unbound
+    state: started
+    enabled: true
+  become: true
+
+- name: Ensure that unresolvconf service is stopped and disabled
+  service:
+    name: unbound-resolvconf
+    state: stopped
+    enabled: false
+  become: true
+
+#Disable the file resolvconf_resolvers.conf from being generated when resolvconf is invoked elsewhere.
+- name: Disable the file resolvconf_resolvers.conf
+  ansible.builtin.command: sudo sed -Ei 's/^unbound_conf=/#unbound_conf=/' /etc/resolvconf.conf
+
+# delete /etc/unbound/unbound.conf.d/resolvconf_resolvers.conf
+- name: Remove file (delete file)
+  ansible.builtin.file:
+    path: /etc/unbound/unbound.conf.d/resolvconf_resolvers.conf
+    state: absent
+  notify: restart unbound

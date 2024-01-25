@@ -26,6 +26,8 @@
         tags: [ nginx-nut-proxy ]
       - role: keepalived-backup
         tags: [ keepalived-backup ]
+      - role: unbound
+        tags: [ unbound ]
 
 - name: keepalived-master service
   hosts: [dev]
