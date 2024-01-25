@@ -24,3 +24,13 @@
         tags: [ nut-client ]
       - role: nginx-nut-proxy
         tags: [ nginx-nut-proxy ]
+      - role: keepalived-backup
+        tags: [ keepalived-backup ]
+
+- name: keepalived-master service
+  hosts: [dev]
+  become: true
+
+  roles:
+      - role: keepalived-master
+        tags: [ keepalived-master ]
