@@ -5,13 +5,6 @@
     state: present
   become: true
 
-- name: Ensure that nginx service is started and enabled on boot
-  service:
-    name: nginx
-    state: started
-    enabled: true
-  become: true
-
 - name: Ensure line is present in nginx.conf file
   lineinfile:
     path: /etc/nginx/nginx.conf
@@ -22,16 +15,12 @@
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
-  notify: restart nginx
 
-- name: Copy nut client configuration files in place.
-  template:
-    src: "{{ item }}.j2"
-    dest: "/etc/nut/{{ item }}"
-    owner: root
-    group: nut
-    mode: 0600
-  with_items:
-    - upssched-cmd
-  notify: restart nut-client
+- name: Ensure that nginx service is restarted and enabled on boot
+  service:
+    name: nginx
+    state: restarted
+    enabled: true
+  become: true
+  
   

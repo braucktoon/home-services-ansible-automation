@@ -1,5 +1,0 @@
----
-- name: restart nut-client
-  service:
-    name: nut-client
-    state: restarted

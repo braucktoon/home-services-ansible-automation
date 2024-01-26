@@ -17,17 +17,16 @@
     - upsmon.conf
     - upssched-cmd
     - upssched.conf
-  notify: restart nut-client
 
 - name: make upssched-cmd executable.
   ansible.builtin.file:
     path: /etc/nut/upssched-cmd
     mode: '0755'
 
-- name: Ensure that nut-client service is started and enabled on boot
+- name: Ensure that nut-client service is restarted and enabled on boot
   service:
     name: nut-client
-    state: started
+    state: restarted
     enabled: true
 
 - name: Ensure that nut client can connect to nut server
