@@ -11,26 +11,8 @@
       - role: docker
         tags: [ docker ]
 
-- name: build nut proxy service
-  hosts: [nut-proxy]
-  handlers:
-  - import_tasks: roles/nut-client/handlers/main.yml
-  become: true
-
-  roles:
-      - role: security
-        tags: [ security ]
-      - role: nut-client
-        tags: [ nut-client ]
-      - role: nginx-nut-proxy
-        tags: [ nginx-nut-proxy ]
-      - role: keepalived-backup
-        tags: [ keepalived-backup ]
-      - role: unbound
-        tags: [ unbound ]
-
 - name: keepalived-master service
-  hosts: [dev]
+  hosts: [gomey]
   become: true
 
   roles:
