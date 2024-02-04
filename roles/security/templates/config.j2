@@ -17,7 +17,7 @@ Host fluff
     User pi
     Port 22
 Host gomey
-    HostName 10.0.0.5
+    HostName 10.0.0.10
     IdentityFile ~/.ssh/{{ssh_key_filename}}
     IdentitiesOnly yes
     User pi
@@ -36,6 +36,12 @@ Host lola
     Port 22
 Host biggie
     HostName 10.0.0.9
+    IdentityFile ~/.ssh/{{ssh_key_filename}}
+    IdentitiesOnly yes
+    User pi
+    Port 22
+Host nut-proxy
+    HostName 10.0.0.233
     IdentityFile ~/.ssh/{{ssh_key_filename}}
     IdentitiesOnly yes
     User pi

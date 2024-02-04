@@ -31,4 +31,3 @@
       service:
         name: nut-client
         state: restarted
-

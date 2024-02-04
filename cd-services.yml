@@ -58,4 +58,13 @@
   roles:
       - role: media
         tags: [media]
+
+  # pihole backup
+- name: pihole-backup
+  hosts: [nut-proxy]
+  become: true
+  
+  roles:
+      - role: pihole
+        tags: [ pihole ]
         
