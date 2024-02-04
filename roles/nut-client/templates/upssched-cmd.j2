@@ -7,9 +7,9 @@ sudo nano /etc/nut/upssched-cmd
        earlyshutdown)
           logger -t upssched-cmd "UPS on battery too long, early shutdown"
           ;;
+          /usr/sbin/upsmon -c fsd
        shutdowncritical)
           logger -t upssched-cmd "UPS on battery critical, forced shutdown"
-          /usr/sbin/upsmon -c fsd
           ;;
        upsgone)
           logger -t upssched-cmd "UPS has been gone too long, can't reach"
