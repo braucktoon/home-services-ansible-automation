@@ -45,6 +45,13 @@ services:
       - speedtest:speedtest
     networks:
       - back-tier
+    extra_hosts:
+      - "gomey:10.0.0.10"
+      - "lola:10.0.0.8"
+      - "floof:10.0.0.7"
+      - "biggie:10.0.0.9"
+      - "nas:10.0.0.2"
+      - "nut-proxy:10.0.0.233"
 {% if domain_name_enable and domain_name and domain_prometheus %}
     depends_on:
       - nginx-proxy
