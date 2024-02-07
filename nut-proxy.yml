@@ -15,6 +15,9 @@
       - role: docker
         tags: [ docker ]
       - role: pihole
+        FTLCONF_LOCAL_IPV4: 10.0.0.233
+        host_name: Secondary pihole
+        container_name: SecondaryPihole
         tags: [ pihole ]
   tasks:
     - name: Copy nut client configuration files in place.

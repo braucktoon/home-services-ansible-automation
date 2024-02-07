@@ -1,0 +1,15 @@
+---
+- name: Generate SSH key pair
+  hosts: dev
+  tasks:
+    - name: generate SSH key
+      openssh_keypair:
+        path: "{{ ansible_env.HOME }}/.ssh/test_key_gen"
+        type: ed25519
+        state: present
+        comment: "test key gen"
+      register: public_key
+
+    - name: Display the captured return value
+      debug:
+        var: public_key

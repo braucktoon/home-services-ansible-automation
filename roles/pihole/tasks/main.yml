@@ -13,7 +13,7 @@
     image: cbcrowe/pihole-unbound:2023.11.0
     pull: yes
     state: "started"
-    hostname: pihole
+    hostname: "{{host_name}}"
     domainname: pihole.mchouseface.com
     env:
       FTLCONF_LOCAL_IPV4: "{{FTLCONF_LOCAL_IPV4}}"
@@ -23,6 +23,8 @@
       PIHOLE_DNS_: "127.0.0.1#5335"
       DNSSEC: "true"
       DNSMASQ_LISTENING: "single"
+      FTLCONF_MAXDBDAYS: "90"
+      FTLCONF_BLOCK_ICLOUD_PR: "true"
     ports:
       - 1443:443/tcp
       - 53:53/tcp
@@ -44,7 +46,7 @@
 
 - name: Copy backup script file in place.
   template:
-    src: "backup-{{container_name}}.sh.j2"
+    src: "backup-pihole.sh.j2"
     dest: "/usr/local/bin/backup-{{container_name}}.sh"
     owner: root
     group: root
