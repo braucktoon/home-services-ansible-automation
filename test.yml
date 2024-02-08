@@ -10,6 +10,19 @@
         comment: "test key gen"
       register: public_key
 
+    - name: Set authorized keys taken from url using lookup
+      ansible.posix.authorized_key:
+        user: pi
+        state: present
+        key: "{{ public_key.public_key }}"
+        comment: "testy"
+
+    - name: Tell the host about our servers it might want to ssh to
+      ansible.builtin.known_hosts:
+        name: dev
+        hash_host: true
+        key: "{{ public_key.public_key }}"
+
     - name: Display the captured return value
       debug:
-        var: public_key
+        msg: "{{ public_key.public_key }}"

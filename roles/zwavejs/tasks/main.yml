@@ -18,3 +18,29 @@
     project_src: "{{ docker_dir }}/{{container_name}}"
     build: false
   become: false
+
+- name: Make {{container_name}} backup directory
+  ansible.builtin.file:
+    path: "{{ backups_dir }}/{{container_name}}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0755
+
+- name: Copy backup script file in place.
+  template:
+    src: "templates/backup-basic-docker.sh.j2"
+    dest: "/usr/local/bin/backup-{{container_name}}.sh"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Add cron job to run backup weekly, at midnight on Sundays.
+  ansible.builtin.cron:
+    name: Run {{container_name}}-backup script.
+    minute: "0"
+    hour: "0"
+    weekday: "0"
+    job: "/usr/local/bin/backup-{{container_name}}.sh"
+    state: present
+  become: false
