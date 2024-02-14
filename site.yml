@@ -11,6 +11,12 @@
       - role: docker
         tags: [ docker ]
 
+- name: ssh keys
+  hosts: [multi]
+  roles:
+      - role: ssh-key-gen
+        tags: [ ssh-key-gen ]
+
 - name: keepalived-master service
   hosts: [gomey]
   become: true
@@ -18,3 +24,34 @@
   roles:
       - role: keepalived-master
         tags: [ keepalived-master ]
+
+- name: build nut proxy service
+  hosts: [nut-proxy]
+  become: true
+
+  roles:
+      - role: security
+        tags: [ security ]
+      - role: nginx-nut-proxy
+        tags: [ nginx-nut-proxy ]
+      - role: nut-client
+        tags: [ nut-client ]
+      - role: keepalived-backup
+        tags: [ keepalived-backup ]
+      - role: docker
+        tags: [ docker ]
+  tasks:
+    - name: Copy nut client configuration files in place.
+      template:
+        src: "roles/nginx-nut-proxy/templates/{{ item }}.j2"
+        dest: "/etc/nut/{{ item }}"
+        owner: root
+        group: nut
+        mode: 0600
+      with_items:
+        - upssched-cmd
+
+    - name: restart nut-cient
+      service:
+        name: nut-client
+        state: restarted

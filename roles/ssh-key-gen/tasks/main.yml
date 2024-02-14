@@ -1,0 +1,53 @@
+---
+- name: generate SSH key "{{ ssh_key_filename }}"
+  openssh_keypair:
+    path: "~/.ssh/{{ ssh_key_filename }}"
+    state: present
+    comment: "Home services"
+    size: 4096
+    type: "{{ ssh_key_type }}"
+  become: false
+
+- name: Fetch the keyfile from the node to master
+  fetch: 
+    src: "~/.ssh/{{ ssh_key_filename }}.pub"
+    dest: "buffer/{{inventory_hostname}}-{{ ssh_key_filename }}.pub"
+    flat: yes
+
+- name: Copy the key add to authorized_keys using Ansible module
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file','buffer/{{item}}-{{ ssh_key_filename }}.pub')}}"
+  when: "{{ item != inventory_hostname }}"
+  with_items: 
+    - "{{ groups['multi'] }}"
+
+- name: delete known_hosts file
+  ansible.builtin.file:
+      path: ~/.ssh/known_hosts
+      state: absent
+
+- name: get remote host keys using ssh-keyscan
+  ansible.builtin.shell:
+    cmd: "ssh-keyscan -H {{ item }} >> ~/.ssh/known_hosts"
+  when: "{{ item != inventory_hostname }}"
+  with_items: 
+    - "{{ groups['multi'] }}"
+
+- name: Install PARAMIKO python package
+  ansible.builtin.pip:
+    name: paramiko
+
+- name: Add a host in the configuration
+  community.general.ssh_config:
+    host: "{{ hostvars[item].ansible_host }}"
+    hostname: "{{ item }}"
+    identity_file: "~/.ssh/{{ ssh_key_filename }}"
+    port: '22'
+    identities_only: true
+    remote_user: "{{ ansible_user }}"
+    ssh_config_file: ~/.ssh/config
+  when: "{{ item != inventory_hostname }}"
+  with_items: 
+    - "{{ groups['multi'] }}"
