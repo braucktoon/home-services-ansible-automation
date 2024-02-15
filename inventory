@@ -16,19 +16,23 @@
 [nut-proxy]
 10.0.0.233 ansible_user=pi
 
-[dev]
-10.0.0.4 ansible_user=pi
-
 [service_hosts]
 10.0.0.10 ansible_user=pi
 10.0.0.7 ansible_user=pi
 10.0.0.8 ansible_user=pi
 10.0.0.9 ansible_user=pi
 
-[multi]
+[dev]
 10.0.0.14 ansible_user=pi ansible_host=banana
 10.0.0.4 ansible_user=pi ansible_host=fluff
 
+[ssh_hosts]
+10.0.0.10 ansible_user=pi ansible_host=gomey
+10.0.0.7 ansible_user=pi ansible_host=floof
+10.0.0.8 ansible_user=pi ansible_host=lola
+10.0.0.9 ansible_user=pi ansible_host=biggie
+10.0.0.233 ansible_user=pi ansible_host=new-proxy
+10.0.0.2 ansible_user=dmcgough ansible_host=nas ansible_python_interpreter=/volume1/\@appstore/python38/bin/python3
 
 
 

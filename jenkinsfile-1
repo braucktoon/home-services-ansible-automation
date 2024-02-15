@@ -18,10 +18,8 @@ pipeline {
             sh """
             ansible --version
             whoami
-            ls -al ~
-            ls -al /home/pi/.ssh/ed25519_backup_pi
             ansible-galaxy collection install community.docker
-            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/ed25519_backup_pi
+            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml
             rm -rf ~/internet-pi-src
             mkdir -p ~/internet-pi-src
             git clone https://github.com/geerlingguy/internet-pi.git ~/internet-pi-src/
@@ -30,7 +28,7 @@ pipeline {
             cp -r ~/internet-pi/templates/docker-compose.yml.j2 ~/internet-pi-src/templates/
             cd ~/internet-pi-src
             ansible-galaxy collection install -r requirements.yml --force
-            ansible-playbook --vault-password-file "$VAULT_PW" main.yml --private-key /home/pi/.ssh/ed25519_backup_pi
+            ansible-playbook --vault-password-file "$VAULT_PW" main.yml
             """
         }
       }

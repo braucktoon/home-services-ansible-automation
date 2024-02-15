@@ -12,10 +12,27 @@
         tags: [ docker ]
 
 - name: ssh keys
-  hosts: [multi]
+  hosts: [ssh_hosts]
   roles:
       - role: ssh-key-gen
         tags: [ ssh-key-gen ]
+
+
+- name: ssh-config
+  hosts: [service_hosts, nut-proxy]
+  tags: [ssh-config]
+  vars:
+    ssh_key_filename: "id_rsa"
+  tasks:
+    - name: Add a host in the configuration
+      community.general.ssh_config:
+        host: "nas"
+        hostname: "10.0.0.2"
+        identity_file: "~/.ssh/{{ ssh_key_filename }}"
+        port: '22'
+        identities_only: true
+        remote_user: "dmcgough"
+        ssh_config_file: ~/.ssh/config
 
 - name: keepalived-master service
   hosts: [gomey]

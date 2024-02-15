@@ -21,19 +21,41 @@
     key: "{{ lookup('file','buffer/{{item}}-{{ ssh_key_filename }}.pub')}}"
   when: "{{ item != inventory_hostname }}"
   with_items: 
-    - "{{ groups['multi'] }}"
+    - "{{ groups['ssh_hosts'] }}"
 
 - name: delete known_hosts file
   ansible.builtin.file:
       path: ~/.ssh/known_hosts
       state: absent
 
+- name: Create Symbolic Link
+  file:
+    src: /usr/local/bin/ssh-keyscan
+    dest: /usr/bin/ssh-keyscan
+    state: link
+  when: "{{ inventory_hostname == '10.0.0.2' }}"
+  become: true
+
 - name: get remote host keys using ssh-keyscan
   ansible.builtin.shell:
     cmd: "ssh-keyscan -H {{ item }} >> ~/.ssh/known_hosts"
   when: "{{ item != inventory_hostname }}"
   with_items: 
-    - "{{ groups['multi'] }}"
+    - "{{ groups['ssh_hosts'] }}"
+
+- name: Run the equivalent of "apt-get update"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: "{{ inventory_hostname != '10.0.0.2' }}"
+  become: true
+
+- name: Install pip3 package.
+  ansible.builtin.apt:
+    name: python3-pip
+    state: present
+  become: true
+  when: "{{ inventory_hostname != '10.0.0.2' }}"
 
 - name: Install PARAMIKO python package
   ansible.builtin.pip:
@@ -50,4 +72,4 @@
     ssh_config_file: ~/.ssh/config
   when: "{{ item != inventory_hostname }}"
   with_items: 
-    - "{{ groups['multi'] }}"
+    - "{{ groups['ssh_hosts'] }}"
