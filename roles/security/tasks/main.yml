@@ -147,36 +147,37 @@
   with_items: "{{ security_sudoers_passworded }}"
   when: security_sudoers_passworded | length > 0
 
-- name: generate SSH key "{{ssh_key_filename}}".
-  connection: local
-  openssh_keypair:
-    path: "~/.ssh/{{ssh_key_filename}}"
-    type: ed25519
-    state: present
-    force: false
-    comment: "pi@backups"
-  become: false
+# the following has been refactored into it's own role.
+#- name: generate SSH key "{{ssh_key_filename}}".
+#  connection: local
+#  openssh_keypair:
+#    path: "~/.ssh/{{ssh_key_filename}}"
+#    type: ed25519
+#    state: present
+#    force: false
+#    comment: "pi@backups"
+#  become: false
 
-- name: Copy the private key to the service hosts.
-  local_action: "ansible.builtin.command rsync -a ~/.ssh/{{ssh_key_filename}} {{username}}@{{inventory_hostname}}:~/.ssh/{{ssh_key_filename}}"
-  become: false
+#- name: Copy the private key to the service hosts.
+#  local_action: "ansible.builtin.command rsync -a ~/.ssh/{{ssh_key_filename}} {{username}}@{{inventory_hostname}}:~/.ssh/{{ssh_key_filename}}"
+#  become: false
 
-- name: Copy the public key to backup host.
-  local_action: "ansible.builtin.command ssh-copy-id -i ~/.ssh/{{ssh_key_filename}}.pub {{nas_user}}@{{nas_host}}"
-  become: false
+#- name: Copy the public key to backup host.
+#  local_action: "ansible.builtin.command ssh-copy-id -i ~/.ssh/{{ssh_key_filename}}.pub {{nas_user}}@{{nas_host}}"
+#  become: false
 
-- name: Copy the public key to all inventory hosts.
-  local_action: "ansible.builtin.command ssh-copy-id -i ~/.ssh/{{ssh_key_filename}}.pub {{username}}@{{inventory_hostname}}"
-  become: false
+#- name: Copy the public key to all inventory hosts.
+#  local_action: "ansible.builtin.command ssh-copy-id -i ~/.ssh/{{ssh_key_filename}}.pub {{username}}@{{inventory_hostname}}"
+#  become: false
 
 #TODO: copy hosts into known_hosts, https://docs.ansible.com/ansible/latest/collections/ansible/builtin/known_hosts_module.html
 
-- name: Copy ssh config file into place.
-  template:
-    src: "config.j2"
-    dest: "~/.ssh/config"
-    mode: 0644
-  become: false
+#- name: Copy ssh config file into place.
+#  template:
+#    src: "config.j2"
+#    dest: "~/.ssh/config"
+#    mode: 0644
+#  become: false
 
 - name: Make base backup directory
   ansible.builtin.file:
