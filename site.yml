@@ -17,14 +17,13 @@
       - role: ssh-key-gen
         tags: [ ssh-key-gen ]
 
-
-- name: ssh-config
+- name: ssh config for backups
   hosts: [service_hosts, nut-proxy]
-  tags: [ssh-config]
+  tags: [ssh-config-for-backups]
   vars:
     ssh_key_filename: "id_rsa"
   tasks:
-    - name: Add a host in the configuration
+    - name: Add a host in the configuration just nas entry for dmcgough user
       community.general.ssh_config:
         host: "nas"
         hostname: "10.0.0.2"
@@ -33,6 +32,24 @@
         identities_only: true
         remote_user: "dmcgough"
         ssh_config_file: ~/.ssh/config
+
+- name: ssh config for build server
+  hosts: [biggie]
+  tags: [ssh-config-for-build-server]
+  vars:
+    ssh_key_filename: "id_rsa"
+  tasks:
+    - name: Add a host in the configuration for each client host the build server needs to access
+      community.general.ssh_config:
+        host: "{{ hostvars[item].ansible_host }}"
+        hostname: "{{ item }}"
+        identity_file: "~/.ssh/{{ ssh_key_filename }}"
+        port: '22'
+        identities_only: true
+        remote_user: "{{ hostvars[item].ansible_user }}"
+        ssh_config_file: ~/.ssh/config
+      with_items: 
+        - "{{ groups['build_client_hosts'] }}"
 
 - name: keepalived-master service
   hosts: [gomey]
