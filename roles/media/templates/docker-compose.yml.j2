@@ -74,50 +74,64 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   sonarr:
-      container_name: {{sonarr_container_name}}
-      image: ghcr.io/onedr0p/sonarr:4.0.1.929
-      user: "1026:100"
-      environment:
-        - SONARR__PORT=8989
-        - SONARR__APPLICATION_URL="https://sonarr.mchouseface.com/"
-        - TZ=America/New_York
-      volumes:
-        - {{docker_dir}}/{{sonarr_container_name}}/config:/config
-        - {{plex_tv_dir}}:/tv
-        - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
-        - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
-      ports:
-        - 8989:8989
-      networks:
-        media:
-          ipv4_address: 10.0.0.11
+    container_name: {{sonarr_container_name}}
+    image: ghcr.io/onedr0p/sonarr:4.0.1.929
+    user: "1026:100"
+    environment:
+      - SONARR__PORT=8989
+      - SONARR__APPLICATION_URL="https://sonarr.mchouseface.com/"
+      - TZ=America/New_York
+    volumes:
+      - {{docker_dir}}/{{sonarr_container_name}}/config:/config
+      - {{plex_tv_dir}}:/tv
+      - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
+      - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
+    ports:
+      - 8989:8989
+    networks:
+      media:
+        ipv4_address: 10.0.0.11
   
   sabnzbd:
-      container_name: {{sabnzbd_container_name}}
-      image: ghcr.io/onedr0p/sabnzbd:4.2.2
-      user: "1026:100"
-      environment:
-        - SABNZBD__PORT=9090
-      volumes:
-        - {{docker_dir}}/{{sabnzbd_container_name}}/config:/config
-        - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
-        - {{docker_dir}}/{{nzb_incomplete_downloads}}:/nzb-incomplete-downloads
-        - {{sabnzbd_backup_dir}}:/backups
-      networks:
-        media:
-          ipv4_address: 10.0.0.12
+    container_name: {{sabnzbd_container_name}}
+    image: ghcr.io/onedr0p/sabnzbd:4.2.2
+    user: "1026:100"
+    environment:
+      - SABNZBD__PORT=9090
+    volumes:
+      - {{docker_dir}}/{{sabnzbd_container_name}}/config:/config
+      - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
+      - {{docker_dir}}/{{nzb_incomplete_downloads}}:/nzb-incomplete-downloads
+      - {{sabnzbd_backup_dir}}:/backups
+    networks:
+      media:
+        ipv4_address: 10.0.0.12
 
   radarr:
-      container_name: {{radarr_container_name}}
-      image: ghcr.io/onedr0p/radarr:5.3.6.8612
-      user: "1026:100"
-      environment:
-        - RADARR__PORT=7878
-      volumes:
-        - {{docker_dir}}/{{radarr_container_name}}/config:/config
-        - {{plex_movies_dir}}:/movies
-        - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
-        - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
-      networks:
-        media:
-          ipv4_address: 10.0.0.13
+    container_name: {{radarr_container_name}}
+    image: ghcr.io/onedr0p/radarr:5.3.6.8612
+    user: "1026:100"
+    environment:
+      - RADARR__PORT=7878
+    volumes:
+      - {{docker_dir}}/{{radarr_container_name}}/config:/config
+      - {{plex_movies_dir}}:/movies
+      - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
+      - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
+    networks:
+      media:
+        ipv4_address: 10.0.0.13
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: "{{ jellyfin_container_name }}"
+    user: "1026:100"
+    network_mode: "host"
+    volumes:
+      - "{{ docker_dir }}/{{ jellyfin_container_name }}/config:/config"
+      - "{{ docker_dir }}/{{ jellyfin_container_name }}/cache:/cache"
+      - "{{ plex_movies_dir }}:/movies"
+      - "{{ plex_tv_dir }}:/tv"
+      - "{{ plex_holiday_dir }}:/holiday-movies"
+      - "{{ plex_kids_dir }}:/kids"
+

@@ -38,8 +38,8 @@
     state: started
     enabled: true
 
-- name: Unconditionally reboot the machine with all defaults
-  ansible.builtin.reboot:
+#- name: Unconditionally reboot the machine with all defaults
+#  ansible.builtin.reboot:
 
 - name: Make base docker data directory
   ansible.builtin.file:

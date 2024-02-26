@@ -69,7 +69,7 @@
       - role: nginx-nut-proxy
         tags: [ nginx-nut-proxy ]
       - role: nut-client
-        tags: [ nut-client ]
+        tags: [ nut-client-proxy ]
       - role: keepalived-backup
         tags: [ keepalived-backup ]
       - role: docker
