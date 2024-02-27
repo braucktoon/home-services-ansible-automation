@@ -123,15 +123,20 @@ services:
         ipv4_address: 10.0.0.13
 
   jellyfin:
-    image: jellyfin/jellyfin
+    image: lscr.io/linuxserver/jellyfin:latest
     container_name: "{{ jellyfin_container_name }}"
-    user: "1026:100"
-    network_mode: "host"
+    environment:
+      - PUID=1026
+      - PGID=100
+      - TZ=America/New_York
     volumes:
       - "{{ docker_dir }}/{{ jellyfin_container_name }}/config:/config"
-      - "{{ docker_dir }}/{{ jellyfin_container_name }}/cache:/cache"
       - "{{ plex_movies_dir }}:/movies"
       - "{{ plex_tv_dir }}:/tv"
       - "{{ plex_holiday_dir }}:/holiday-movies"
       - "{{ plex_kids_dir }}:/kids"
+    devices:
+      - /dev/dri:/dev/dri
+    ports:
+      - 8096:8096
 

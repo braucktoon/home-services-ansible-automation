@@ -72,14 +72,6 @@
     group: "{{ usergroup }}"
     mode: 0755
 
-- name: Create the {{jellyfin_container_name}} cache folder
-  ansible.builtin.file:
-    path: "{{ docker_dir }}/{{jellyfin_container_name}}/cache"
-    state: directory
-    owner: "{{ username }}"
-    group: "{{ usergroup }}"
-    mode: 0755
-
 - name: Copy docker-compose.yml file in place.
   template:
     src: "docker-compose.yml.j2"
