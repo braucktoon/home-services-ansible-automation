@@ -129,6 +129,7 @@ services:
       - PUID=1026
       - PGID=100
       - TZ=America/New_York
+      - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
     volumes:
       - "{{ docker_dir }}/{{ jellyfin_container_name }}/config:/config"
       - "{{ plex_movies_dir }}:/movies"
