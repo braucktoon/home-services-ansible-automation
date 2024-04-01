@@ -16,11 +16,15 @@
 [nut-proxy]
 10.0.0.233 ansible_user=pi ansible_host=new-proxy
 
+[media]
+10.0.0.15 ansible_user=media ansible_host=media
+
 [service_hosts]
 10.0.0.10 ansible_user=pi ansible_host=gomey
 10.0.0.7 ansible_user=pi ansible_host=floof
 10.0.0.8 ansible_user=pi ansible_host=lola
 10.0.0.9 ansible_user=pi ansible_host=biggie
+10.0.0.15 ansible_user=media ansible_host=media
 
 [dev]
 10.0.0.14 ansible_user=pi ansible_host=banana
@@ -33,6 +37,7 @@
 10.0.0.9 ansible_user=pi ansible_host=biggie
 10.0.0.233 ansible_user=pi ansible_host=new-proxy
 10.0.0.2 ansible_user=dmcgough ansible_host=nas ansible_python_interpreter=/volume1/\@appstore/python38/bin/python3
+10.0.0.15 ansible_user=media ansible_host=media
 
 # these are the hosts that Jenkins need to talk to. 
 [build_client_hosts]
@@ -41,5 +46,6 @@
 10.0.0.8 ansible_user=pi ansible_host=lola
 10.0.0.9 ansible_user=pi ansible_host=biggie
 10.0.0.233 ansible_user=pi ansible_host=new-proxy
+10.0.0.15 ansible_user=media ansible_host=media
 
 

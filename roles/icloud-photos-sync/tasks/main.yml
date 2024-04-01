@@ -4,24 +4,24 @@
   ansible.builtin.file:
     path: "{{dave_backup_dir}}"
     state: directory
-    owner: "{{ username }}"
-    group: "{{ usergroup }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Create the {{jeni_container_name}} data folder
   ansible.builtin.file:
     path: "{{jeni_backup_dir}}"
     state: directory
-    owner: "{{ username }}"
-    group: "{{ usergroup }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Create the {{docker_dir}} config folder
   ansible.builtin.file:
     path: "{{docker_dir}}"
     state: directory
-    owner: "{{ username }}"
-    group: "{{ usergroup }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Copy docker-compose.yml file in place.
