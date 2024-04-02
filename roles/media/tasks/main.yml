@@ -1,43 +1,43 @@
 ---
 
-- name: Create the {{plex_container_name}} config folder
-  ansible.builtin.file:
-    path: "{{ docker_dir }}/{{plex_container_name}}/config"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0755
+#- name: Create the {{plex_container_name}} config folder
+#  ansible.builtin.file:
+#    path: "{{ docker_dir }}/{{plex_container_name}}/config"
+#    state: directory
+#    owner: "{{ ansible_user }}"
+#    group: "{{ ansible_user }}"
+#    mode: 0755
 
-- name: Create the {{plex_container_name}} transcode folder
-  ansible.builtin.file:
-    path: "{{ docker_dir }}/{{plex_container_name}}/transcode"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0755
+#- name: Create the {{plex_container_name}} transcode folder
+#  ansible.builtin.file:
+#    path: "{{ docker_dir }}/{{plex_container_name}}/transcode"
+#    state: directory
+#    owner: "{{ ansible_user }}"
+#    group: "{{ ansible_user }}"
+#    mode: 0755
 
 - name: Create the {{qbt_container_name}} config folder
   ansible.builtin.file:
     path: "{{ docker_dir }}/{{qbt_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    group: "{{ users }}"
     mode: 0755
 
-- name: Create the {{qbt_container_name}} media folder
-  ansible.builtin.file:
-    path: "{{ docker_dir }}/{{qbt_container_name}}/media"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0755
+#- name: Create the {{qbt_container_name}} media folder
+#  ansible.builtin.file:
+#    path: "{{ docker_dir }}/{{qbt_container_name}}/media"
+#    state: directory
+#    owner: "{{ ansible_user }}"
+#    group: "{{ ansible_user }}"
+#    mode: 0755
 
 - name: Create the {{prowlarr_container_name}} config folder
   ansible.builtin.file:
     path: "{{ docker_dir }}/{{prowlarr_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    group: "{{ users }}"
     mode: 0755
 
 - name: Create the {{sonarr_container_name}} config folder
@@ -45,7 +45,7 @@
     path: "{{ docker_dir }}/{{sonarr_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    group: "{{ users }}"
     mode: 0755
 
 - name: Create the {{sabnzbd_container_name}} config folder
@@ -53,7 +53,7 @@
     path: "{{ docker_dir }}/{{sabnzbd_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    group: "{{ users }}"
     mode: 0755
 
 - name: Create the {{radarr_container_name}} config folder
@@ -61,7 +61,7 @@
     path: "{{ docker_dir }}/{{radarr_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    group: "{{ users }}"
     mode: 0755
 
 - name: Create the {{jellyfin_container_name}} config folder
@@ -69,7 +69,7 @@
     path: "{{ docker_dir }}/{{jellyfin_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    group: "{{ users }}"
     mode: 0755
 
 - name: Copy docker-compose.yml file in place.

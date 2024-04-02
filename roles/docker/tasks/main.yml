@@ -16,11 +16,15 @@
     state: present
   when: ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '==')
 
+#special case for my mini pc that runs debain 12.5
 - name: Install repository
   apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/debian bookworm stable
     state: present
-  when: ansible_distribution == 'Debian' and ansible_distribution_version is version('12.5', '==')
+  when:
+    - ansible_architecture == "x86_64"
+    - ansible_distribution == "Debian"
+    - ansible_distribution_version == "12.5"
 
 # update the system
 - name: Run the equivalent of "apt-get update" as a separate step

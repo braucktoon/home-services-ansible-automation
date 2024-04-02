@@ -1,6 +1,6 @@
 ---
 - name: node-exporter
-  hosts: [gomey,floof,biggie,nut-proxy]
+  hosts: [gomey,floof,biggie,nut-proxy,media]
   become: true
 
   roles:
