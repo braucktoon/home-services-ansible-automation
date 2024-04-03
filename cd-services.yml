@@ -53,7 +53,7 @@
         tags: [ vaultwarden ]
 
 - name: Setup NAS services
-  hosts: [nas]
+  hosts: [media]
   
   roles:
       - role: media

@@ -21,7 +21,7 @@
     path: "{{ docker_dir }}/{{qbt_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "users"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 #- name: Create the {{qbt_container_name}} media folder
@@ -37,7 +37,7 @@
     path: "{{ docker_dir }}/{{prowlarr_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "users"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Create the {{sonarr_container_name}} config folder
@@ -45,7 +45,7 @@
     path: "{{ docker_dir }}/{{sonarr_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "users"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Create the {{sabnzbd_container_name}} config folder
@@ -53,7 +53,7 @@
     path: "{{ docker_dir }}/{{sabnzbd_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "users"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Create the {{radarr_container_name}} config folder
@@ -61,7 +61,7 @@
     path: "{{ docker_dir }}/{{radarr_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "users"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Create the {{jellyfin_container_name}} config folder
@@ -69,22 +69,22 @@
     path: "{{ docker_dir }}/{{jellyfin_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "users"
+    group: "{{ ansible_user }}"
     mode: 0755
 
 - name: Copy docker-compose.yml file in place.
   template:
     src: "docker-compose.yml.j2"
-    dest: "{{ docker_dir }}//docker-compose.yml"
+    dest: "{{ docker_dir }}/docker-compose.yml"
 
 - name: Tear down the media services.
   community.docker.docker_compose:
-    project_src: "{{ docker_dir }}/"
+    project_src: "{{ docker_dir }}"
     state: absent
   become: false
 
 - name: Ensure the media services are running.
   community.docker.docker_compose:
-    project_src: "{{ docker_dir }}/"
+    project_src: "{{ docker_dir }}"
     build: false
   become: false

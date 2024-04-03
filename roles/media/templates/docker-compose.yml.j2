@@ -5,7 +5,7 @@ networks:
     name: media
     driver: macvlan
     driver_opts:
-      parent: eth0
+      parent: enp3s0
     ipam:
       config:
         - subnet: "10.0.0.0/24"
@@ -38,7 +38,7 @@ services:
 
   prowlarr:
     image: ghcr.io/onedr0p/prowlarr:1.15.0.4361
-    user: "1026:100"
+    user: "1000:1000"
     restart: unless-stopped
     container_name: {{prowlarr_container_name}}
     environment:
@@ -54,29 +54,21 @@ services:
 
   qbittorrent:
     container_name: {{qbt_container_name}}
-    user: "1026:100"
+    user: "1000:1000"
     restart: unless-stopped
     image: ghcr.io/onedr0p/qbittorrent:4.6.4
     environment:
       - QBITTORRENT__PORT=8080
     volumes:
       - {{docker_dir}}/{{qbt_container_name}}/config:/config
-      - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
+      - {{torrent_downloads}}:/torrent-downloads
     network_mode: service:gluetun
-
-  portainer-agent:
-    image: portainer/agent:2.20.0
-    restart: unless-stopped
-    ports:
-      - "9001:9001"
-    volumes:
-      - /volume1/@docker/volumes:/var/lib/docker/volumes
-      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   sonarr:
     container_name: {{sonarr_container_name}}
     image: ghcr.io/onedr0p/sonarr:4.0.3.1413
-    user: "1026:100"
+    user: "1000:1000"
+    restart: unless-stopped
     environment:
       - SONARR__PORT=8989
       - SONARR__APPLICATION_URL="https://sonarr.mchouseface.com/"
@@ -84,8 +76,8 @@ services:
     volumes:
       - {{docker_dir}}/{{sonarr_container_name}}/config:/config
       - {{plex_tv_dir}}:/tv
-      - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
-      - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
+      - {{torrent_downloads}}:/torrent-downloads
+      - {{nzb_downloads}}:/nzb-downloads
     ports:
       - 8989:8989
     networks:
@@ -95,13 +87,14 @@ services:
   sabnzbd:
     container_name: {{sabnzbd_container_name}}
     image: ghcr.io/onedr0p/sabnzbd:4.2.3
-    user: "1026:100"
+    user: "1000:1000"
+    restart: unless-stopped
     environment:
       - SABNZBD__PORT=9090
     volumes:
       - {{docker_dir}}/{{sabnzbd_container_name}}/config:/config
-      - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
-      - {{docker_dir}}/{{nzb_incomplete_downloads}}:/nzb-incomplete-downloads
+      - {{nzb_downloads}}:/nzb-downloads
+      - {{nzb_incomplete_downloads}}:/nzb-incomplete-downloads
       - {{sabnzbd_backup_dir}}:/backups
     networks:
       media:
@@ -110,14 +103,15 @@ services:
   radarr:
     container_name: {{radarr_container_name}}
     image: ghcr.io/onedr0p/radarr:5.3.6.8612
-    user: "1026:100"
+    user: "1000:1000"
+    restart: unless-stopped
     environment:
       - RADARR__PORT=7878
     volumes:
       - {{docker_dir}}/{{radarr_container_name}}/config:/config
       - {{plex_movies_dir}}:/movies
-      - {{docker_dir}}/{{torrent_downloads}}:/torrent-downloads
-      - {{docker_dir}}/{{nzb_downloads}}:/nzb-downloads
+      - {{torrent_downloads}}:/torrent-downloads
+      - {{nzb_downloads}}:/nzb-downloads
     networks:
       media:
         ipv4_address: 10.0.0.13
@@ -125,9 +119,10 @@ services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:10.8.13
     container_name: "{{ jellyfin_container_name }}"
+    restart: unless-stopped
     environment:
-      - PUID=1026
-      - PGID=100
+      - PUID=1000
+      - PGID=1000
       - TZ=America/New_York
       - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
     volumes:
