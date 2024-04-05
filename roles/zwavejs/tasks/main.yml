@@ -12,6 +12,14 @@
   template:
     src: "docker-compose.yml.j2"
     dest: "{{ docker_dir }}/{{container_name}}/docker-compose.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Tear down the {{container_name}} services.
+  community.docker.docker_compose:
+    project_src: "{{ docker_dir }}/{{container_name}}"
+    state: absent
+  become: false
 
 - name: Ensure the  services are running.
   community.docker.docker_compose:
