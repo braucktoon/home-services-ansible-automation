@@ -30,7 +30,7 @@
     dest: "{{ docker_dir }}//docker-compose.yml"
 
 - name: Ensure the services are running.
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ docker_dir }}/"
-    build: false
+    build: never
   become: false

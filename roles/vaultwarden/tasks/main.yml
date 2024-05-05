@@ -13,9 +13,9 @@
     dest: "{{ docker_dir }}/{{container_name}}/docker-compose.yml"
 
 - name: Ensure {{container_name}} is running.
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ docker_dir }}/{{container_name}}/"
-    build: false
+    build: never
   become: false
 
 - name: Make {{container_name}} backup directory
