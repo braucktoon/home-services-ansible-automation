@@ -15,7 +15,7 @@ services:
 
   gluetun:
     image: qmcgaw/gluetun:v3.38.0
-    restart: unless-stopped
+    restart: on-failure
     container_name: {{gluetun_container_name}}
     cap_add:
       - NET_ADMIN
@@ -39,7 +39,7 @@ services:
   prowlarr:
     image: ghcr.io/onedr0p/prowlarr:1.16.2.4435
     user: "1000:1000"
-    restart: unless-stopped
+    restart: on-failure
     container_name: {{prowlarr_container_name}}
     environment:
         - TZ=America/New_York
@@ -55,7 +55,7 @@ services:
   qbittorrent:
     container_name: {{qbt_container_name}}
     user: "1000:1000"
-    restart: unless-stopped
+    restart: on-failure
     image: ghcr.io/onedr0p/qbittorrent:4.6.4
     environment:
       - QBITTORRENT__PORT=8080
@@ -68,7 +68,7 @@ services:
     container_name: {{sonarr_container_name}}
     image: ghcr.io/onedr0p/sonarr:4.0.4.1491
     user: "1000:1000"
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - SONARR__PORT=8989
       - SONARR__APPLICATION_URL="https://sonarr.mchouseface.com/"
@@ -88,7 +88,7 @@ services:
     container_name: {{sabnzbd_container_name}}
     image: ghcr.io/onedr0p/sabnzbd:4.3.1
     user: "1000:1000"
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - SABNZBD__PORT=9090
     volumes:
@@ -104,7 +104,7 @@ services:
     container_name: {{radarr_container_name}}
     image: ghcr.io/onedr0p/radarr:5.4.6.8723
     user: "1000:1000"
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - RADARR__PORT=7878
     volumes:
@@ -119,7 +119,7 @@ services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:10.8.13
     container_name: "{{ jellyfin_container_name }}"
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - PUID=1000
       - PGID=1000
