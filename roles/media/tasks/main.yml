@@ -77,14 +77,49 @@
     src: "docker-compose.yml.j2"
     dest: "{{ docker_dir }}/docker-compose.yml"
 
-- name: Tear down the media services.
-  community.docker.docker_compose_v2:
-    project_src: "{{ docker_dir }}"
-    state: absent
-  become: false
+#- name: Tear down the media services.
+#  community.docker.docker_compose_v2:
+#    project_src: "{{ docker_dir }}"
+#    state: absent
+#  become: false
 
 - name: Ensure the media services are running.
   community.docker.docker_compose_v2:
     project_src: "{{ docker_dir }}"
     build: never
+  become: false
+
+- name: Make jellyfin backup directory
+  ansible.builtin.file:
+    path: "{{ backups_dir }}/jellyfin"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: Make qbt backup directory
+  ansible.builtin.file:
+    path: "{{ backups_dir }}/qbt"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: Copy backup script file in place.
+  template:
+    src: "backup-media.sh.j2"
+    dest: "/usr/local/bin/backup-media.sh"
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+
+- name: Add cron job to run backup weekly, at midnight on Sundays.
+  ansible.builtin.cron:
+    name: Run media backup script.
+    minute: "0"
+    hour: "0"
+    weekday: "0"
+    job: "/usr/local/bin/backup-media.sh"
+    state: present
   become: false

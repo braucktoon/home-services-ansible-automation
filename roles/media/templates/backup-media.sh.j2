@@ -1,0 +1,31 @@
+#!/bin/bash
+
+DEST_FOLDER='{{backups_dir}}/jellyfin'
+DEST_FILE="jellyfin-backup-$(date +'%F_%R').tar"
+BACKUP_CMD="/bin/tar -rvf"
+docker stop media-jellyfin
+sudo $BACKUP_CMD $DEST_FOLDER/$DEST_FILE /data/media/media-jellyfin
+docker start media-jellyfin
+/bin/gzip $DEST_FOLDER/$DEST_FILE
+/usr/bin/find $DEST_FOLDER -mtime +98 -delete
+rsync -auvz --delete $DEST_FOLDER/ nas:/volume1/backups/media/jellyfin
+
+DEST_FOLDER='{{backups_dir}}/qbt'
+DEST_FILE="qbt-backup-$(date +'%F_%R').tar"
+BACKUP_CMD="/bin/tar -rvf"
+docker stop media-qbt
+sudo $BACKUP_CMD $DEST_FOLDER/$DEST_FILE /data/media/media-qbt
+docker start media-qbt
+/bin/gzip $DEST_FOLDER/$DEST_FILE
+/usr/bin/find $DEST_FOLDER -mtime +98 -delete
+rsync -auvz --delete $DEST_FOLDER/ nas:/volume1/backups/media/qbt
+
+/usr/bin/find /data/media/media-radarr/config/Backups -mtime +98 -delete
+/usr/bin/find /backups/sabnzbd -mtime +98 -delete
+/usr/bin/find /data/media/media-prowlarr/config/Backups -mtime +98 -delete
+/usr/bin/find /data/media/media-sonarr/config/Backups -mtime +98 -delete
+
+rsync -auvz --delete /data/media/media-radarr/config/Backups/ nas:/volume1/backups/media/radarr
+rsync -auvz --delete /backups/sabnzbd/ nas:/volume1/backups/media/sabnzbd
+rsync -auvz --delete /data/media/media-prowlarr/config/Backups/ nas:/volume1/backups/media/prowlarr
+rsync -auvz --delete /data/media/media-sonarr/config/Backups/ nas:/volume1/backups/media/sonarr
