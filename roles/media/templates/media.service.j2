@@ -1,0 +1,11 @@
+[Unit]
+Description=My media Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/media/startmedia.sh
+
+[Install]
+WantedBy=multi-user.target

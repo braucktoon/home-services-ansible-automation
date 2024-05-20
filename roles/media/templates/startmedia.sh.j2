@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Define NFS share and local mount point
+NFS_SHARE_MEDIA="10.0.0.2:/volume1/media"
+LOCAL_MOUNT_POINT_MEDIA="/volume1/media"
+
+NFS_SHARE_DOCKER="10.0.0.2:/volume1/docker"
+LOCAL_MOUNT_POINT_DOCKER="/volume1/docker"
+
+# Define the Docker Compose directory
+DOCKER_COMPOSE_DIR="/data/media"
+
+# Ensure the local mount point directory exists
+if [ ! -d "$LOCAL_MOUNT_POINT_MEDIA" ]; then
+    echo "Creating mount point directory at ${LOCAL_MOUNT_POINT_MEDIA}"
+    mkdir -p "$LOCAL_MOUNT_POINT_MEDIA"
+fi
+
+# Ensure the local mount point directory exists
+if [ ! -d "$LOCAL_MOUNT_POINT_DOCKER" ]; then
+    echo "Creating mount point directory at ${LOCAL_MOUNT_POINT_DOCKER}"
+    mkdir -p "$LOCAL_MOUNT_POINT_DOCKER"
+fi
+
+# Mount the NFS share
+echo "Mounting NFS share..."
+mount -t nfs $NFS_SHARE_MEDIA $LOCAL_MOUNT_POINT_MEDIA
+mount -t nfs $NFS_SHARE_DOCKER $LOCAL_MOUNT_POINT_DOCKER
+
+# Check if the mount was successful
+if mountpoint -q "$LOCAL_MOUNT_POINT_MEDIA"; then
+    echo "NFS MEDIA share mounted successfully."
+else
+    echo "Failed to mount NFS MEDIA share."
+    exit 1
+fi
+
+# Check if the mount was successful
+if mountpoint -q "$LOCAL_MOUNT_POINT_DOCKER"; then
+    echo "NFS DOCKER share mounted successfully."
+else
+    echo "Failed to mount NFS DOCKER share."
+    exit 1
+fi
+
+# Navigate to the Docker Compose directory
+cd "$DOCKER_COMPOSE_DIR"
+
+# Check if docker-compose.yml exists
+if [ -f "docker-compose.yml" ]; then
+    # Start Docker Compose
+    echo "Starting Docker Compose..."
+    docker compose up -d
+else
+    echo "docker-compose.yml not found in ${DOCKER_COMPOSE_DIR}"
+    exit 1
+fi
