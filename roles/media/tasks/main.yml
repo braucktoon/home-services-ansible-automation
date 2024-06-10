@@ -15,6 +15,54 @@
 #    owner: "{{ ansible_user }}"
 #    group: "{{ ansible_user }}"
 #    mode: 0755
+- name: Create the local file system
+  ansible.builtin.file:
+    path: "/volume1"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: 0777
+
+- name: Create the local file system
+  ansible.builtin.file:
+    path: "/volume1/docker"
+    state: directory
+    owner: 1026
+    group: "users"
+    mode: 0777
+
+- name: Create the local file system
+  ansible.builtin.file:
+    path: "/volume1/media"
+    state: directory
+    owner: 1026
+    group: "users"
+    mode: 0777
+
+- name: Ensure NFS client is installed
+  ansible.builtin.package:
+    name: nfs-common
+    state: present
+
+- name: Mount an NFS media share
+  ansible.builtin.mount:
+    path: /volume1/media  # Local mount point
+    src: 10.0.0.2:/volume1/media  # NFS server share path
+    fstype: nfs
+    state: mounted
+    dump: 0
+    passno: 0
+  become: true
+
+- name: Mount an NFS docker share
+  ansible.builtin.mount:
+    path: /volume1/docker  # Local mount point
+    src: 10.0.0.2:/volume1/docker  # NFS server share path
+    fstype: nfs
+    state: mounted
+    dump: 0
+    passno: 0
+  become: true
 
 - name: Create the {{qbt_container_name}} config folder
   ansible.builtin.file:
@@ -123,3 +171,31 @@
     job: "/usr/local/bin/backup-media.sh"
     state: present
   become: false
+
+- name: Copy media.service script file in place.
+  template:
+    src: "media.service.j2"
+    dest: "/etc/systemd/system/media.service"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+
+- name: Copy startmedia script file in place.
+  template:
+    src: "startmedia.sh.j2"
+    dest: "/home/media/startmedia.sh"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+  become: false
+
+- name: Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: true
+
+- name: Ensure that media.service service is restarted and enabled on boot
+  service:
+    name: media.service
+    enabled: true
