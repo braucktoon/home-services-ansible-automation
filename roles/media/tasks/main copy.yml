@@ -120,9 +120,33 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
-- name: Create the tubesync config folder
+- name: Create the ytdl appdata folder
   ansible.builtin.file:
-    path: "{{ docker_dir }}/{{tubesync_container_name}}/config"
+    path: "{{ docker_dir }}/{{youtube_dl_container_name}}/appdata"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: Create the ytdl subs folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{youtube_dl_container_name}}/subscriptions"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: Create the ytdl users folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{youtube_dl_container_name}}/users"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: Create the ytdl mongo folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{youtube_dl_mongo_container_name}}/db"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

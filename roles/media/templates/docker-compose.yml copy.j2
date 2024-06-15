@@ -138,16 +138,33 @@ services:
     ports:
       - 8096:8096
 
-  tubesync:
-    image: ghcr.io/meeb/tubesync:v0.13.6
-    container_name: {{ tubesync_container_name }}
-    restart: on-failure
-    ports:
-      - 4848:4848
-    volumes:
-      - "{{ docker_dir }}/{{ tubesync_container_name }}:/config"
-      - "{{ tubesync_dir }}:/downloads"
+  ytdl_material:
     environment:
-      - TZ=America/New_York
+      - ytdl_mongodb_connection_string = "mongodb://ytdl-mongo-db:27017"
+      - ytdl_use_local_db = "false"
+      - write_ytdl_config = "true"
       - PUID=1000
       - PGID=1000
+    restart: on-failure
+    depends_on:
+      - ytdl-mongo-db
+    volumes:
+      - "{{ docker_dir }}/{{ youtube_dl_container_name }}/appdata:/app/appdata"
+      - "{{ youtube_audio_dir }}:/app/audio"
+      - "{{ youtube_video_dir }}:/app/video"
+      - "{{ docker_dir }}/{{ youtube_dl_container_name }}/subscriptions:/app/subscriptions"
+      - "{{ docker_dir }}/{{ youtube_dl_container_name }}/users:/app/users"
+    ports:
+      - "8998:17442"
+    image: tzahi12345/youtubedl-material:4.3.2
+    container_name: "{{ youtube_dl_container_name }}"
+
+  ytdl-mongo-db:
+    # If you are using a Raspberry Pi, use mongo:4.4.18
+    image: mongo:4
+    logging:
+      driver: "none"
+    container_name: mongo-db
+    restart: on-failure
+    volumes:
+      - "{{ docker_dir }}/{{ youtube_dl_mongo_container_name }}/db/:/data/db"
