@@ -1,0 +1,41 @@
+---
+- name: Ensure apt is up to date
+  apt:
+    update_cache: yes
+
+- name: Install required dependencies
+  apt:
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Add Tailscale GPG key
+  apt_key:
+    url: https://pkgs.tailscale.com/stable/raspbian/bullseye.gpg
+    state: present
+
+- name: Add Tailscale APT repository
+  apt_repository:
+    repo: "deb https://pkgs.tailscale.com/stable/raspbian bullseye main"
+    state: present
+    filename: 'tailscale.list'
+
+- name: Update APT cache after adding Tailscale repository
+  apt:
+    update_cache: yes
+
+- name: Install Tailscale
+  apt:
+    name: tailscale
+    state: latest
+
+- name: Start Tailscale service
+  systemd:
+    name: tailscaled
+    state: started
+    enabled: yes
+

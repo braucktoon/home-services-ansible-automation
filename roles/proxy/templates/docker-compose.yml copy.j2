@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:2.11.3
+    container_name: {{container_name}}
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - {{ docker_dir }}/{{container_name}}/data:/data
+      - {{ docker_dir }}/{{container_name}}/letsencrypt:/etc/letsencrypt
+  
+  tailscale-npm:
+    image: tailscale/tailscale:latest
+    environment:
+      - TS_AUTHKEY={{ tailscale_key }}
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - ${PWD}/tailscale-nginx-proxy-manager/state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+    network_mode: "service:nginx-proxy-manager"
