@@ -19,8 +19,6 @@
         tags: [ pihole ]
       - role: heimdall
         tags: [ heimdall ]
-      - role: tailscale
-        tags: [ tailscale ]
 
   # home automation server.
 - name: floof
