@@ -19,6 +19,8 @@
         tags: [ pihole ]
       - role: heimdall
         tags: [ heimdall ]
+      - role: tailscale
+        tags: [ tailscale ]
 
   # home automation server.
 - name: floof
@@ -51,8 +53,6 @@
         tags: [ proxy ]
       - role: vaultwarden
         tags: [ vaultwarden ]
-      - role: tailscale
-        tags: [ tailscale ]
 
 - name: Setup NAS services
   hosts: [media]

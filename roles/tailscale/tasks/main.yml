@@ -40,7 +40,7 @@
     enabled: yes
 
 - name: Authenticate Tailscale with Auth Key
-  shell: tailscale up --authkey={{ tailscale_authkey }}
+  shell: tailscale up --authkey={{ tailscale_authkey }} --accept-dns=false
   when: tailscale_authkey is defined
   register: tailscale_output
 
