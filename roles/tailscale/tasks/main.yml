@@ -39,3 +39,11 @@
     state: started
     enabled: yes
 
+- name: Authenticate Tailscale with Auth Key
+  shell: tailscale up --authkey={{ tailscale_authkey }}
+  when: tailscale_authkey is defined
+  register: tailscale_output
+
+- name: Display Tailscale output
+  debug:
+    msg: "{{ tailscale_output.stdout }}"
