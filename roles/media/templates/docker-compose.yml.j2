@@ -136,28 +136,6 @@ services:
     devices:
       - /dev/dri:/dev/dri       # This allows Plex to access the Intel GPU for hardware encoding
   
-  jellyfin:
-    image: lscr.io/linuxserver/jellyfin:10.9.10
-    container_name: "{{ jellyfin_container_name }}"
-    restart: on-failure
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
-      - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
-    volumes:
-      - "{{ docker_dir }}/{{ jellyfin_container_name }}/config:/config"
-      - "{{ plex_movies_dir }}:/movies"
-      - "{{ plex_tv_dir }}:/tv"
-      - "{{ plex_holiday_dir }}:/holiday-movies"
-      - "{{ plex_kids_dir }}:/kids"
-      - "{{ youtube_audio_dir }}:/youtube_audio"
-      - "{{ youtube_video_dir }}:/youtube_video"
-    devices:
-      - /dev/dri:/dev/dri
-    ports:
-      - 8096:8096
-
   tubesync:
     image: ghcr.io/meeb/tubesync:v0.13.7
     container_name: {{ tubesync_container_name }}
