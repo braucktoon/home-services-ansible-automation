@@ -27,7 +27,7 @@ services:
 {% endif %}
 
   prometheus:
-    image: prom/prometheus:v2.55.0
+    image: prom/prometheus:v2.55.1
     restart: always
     volumes:
       - ./prometheus/:/etc/prometheus/
