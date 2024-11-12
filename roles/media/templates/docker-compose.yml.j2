@@ -135,17 +135,4 @@ services:
       - "{{ plex_kids_dir }}:/kids"
     devices:
       - /dev/dri:/dev/dri       # This allows Plex to access the Intel GPU for hardware encoding
-  
-  tubesync:
-    image: ghcr.io/meeb/tubesync:v0.13.7
-    container_name: {{ tubesync_container_name }}
-    restart: on-failure
-    ports:
-      - 4848:4848
-    volumes:
-      - "{{ docker_dir }}/{{ tubesync_container_name }}:/config"
-      - "{{ tubesync_dir }}:/downloads"
-    environment:
-      - TZ=America/New_York
-      - PUID=1000
-      - PGID=1000
+

@@ -22,22 +22,25 @@
     owner: "root"
     group: "root"
     mode: 0777
+  become: true
 
 - name: Create the local file system
   ansible.builtin.file:
     path: "/volume1/docker"
     state: directory
-    owner: 1026
-    group: "users"
+    owner: "root"
+    group: "root"
     mode: 0777
+  become: true
 
 - name: Create the local file system
   ansible.builtin.file:
     path: "/volume1/media"
     state: directory
-    owner: 1026
-    group: "users"
+    owner: "root"
+    group: "root"
     mode: 0777
+  become: true
 
 - name: Ensure NFS client is installed
   ansible.builtin.package:
@@ -115,14 +118,6 @@
 - name: Create the jellyfin config folder
   ansible.builtin.file:
     path: "{{ docker_dir }}/{{jellyfin_container_name}}/config"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0755
-
-- name: Create the tubesync config folder
-  ansible.builtin.file:
-    path: "{{ docker_dir }}/{{tubesync_container_name}}/config"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
