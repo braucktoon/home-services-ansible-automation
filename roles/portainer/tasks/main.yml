@@ -10,7 +10,7 @@
 - name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
     name: "{{container_name}}"
-    image: portainer/portainer-ce:2.24.0
+    image: portainer/portainer-ce:2.23.0
     pull: yes
     state: "started"
     restart_policy: always
