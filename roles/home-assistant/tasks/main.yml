@@ -10,7 +10,7 @@
 - name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
     name: "{{container_name}}"
-    image: homeassistant/home-assistant:2024.11.3
+    image: homeassistant/home-assistant:2024.12.0
     pull: yes
     state: "started"
     privileged: true
