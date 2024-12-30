@@ -1,68 +1,37 @@
 ---
-- name: Install required system packages
-  ansible.builtin.apt:
-    update_cache: yes
+- name: Ensure curl is installed
+  apt:
+    name: curl
     state: present
-    name: "{{ docker_deps }}"
+  when: ansible_os_family == "Debian"
+  become: true
 
-- name: Install repo key
-  apt_key:
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
+- name: Install Docker using the convenience script
+  shell: |
+    curl -sSL https://get.docker.com | sh
+  args:
+    executable: /bin/bash
+  become: true
 
-- name: Install repository
-  apt_repository:
-    repo: deb [arch=arm64] https://download.docker.com/linux/debian bullseye stable
-    state: present
-  when: ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '==')
+- name: Install Docker Compose
+  shell: |
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)
+    curl -L "https://github.com/docker/compose/releases/download/${LATEST_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose || true
+  args:
+    executable: /bin/bash
+  become: true
 
-#special case for my mini pc that runs debain 12.5
-- name: Install repository
-  apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/debian bookworm stable
-    state: present
-  when:
-    - ansible_architecture == "x86_64"
-    - ansible_distribution == "Debian"
-    - ansible_distribution_version == "12.5"
+- name: Add pi user to docker group
+  user:
+    name: pi
+    groups: docker
+    append: true
+  become: true
 
-# update the system
-- name: Run the equivalent of "apt-get update" as a separate step
-  ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: 3600
+- name: Verify Docker installation
+  command: docker --version
 
-- name: Update apt and install docker
-  ansible.builtin.apt:
-    name: "{{ docker_packages }}"
-    state: present
-
-- name: Ensure group docker exists
-  ansible.builtin.group:
-    name: docker
-    state: present
-
-- name: Add user to group docker
-  ansible.builtin.user:
-    name: "{{ ansible_user }}"
-    groups:
-      - docker
-    append: yes
-
-- name: Make sure Docker is running and enabled
-  service:
-    name: docker
-    state: started
-    enabled: true
-
-#- name: Unconditionally reboot the machine with all defaults
-#  ansible.builtin.reboot:
-
-- name: Make base docker data directory
-  ansible.builtin.file:
-    path: "{{ docker_dir }}"
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0755
-
+- name: Verify Docker Compose installation
+  command: docker-compose --version
