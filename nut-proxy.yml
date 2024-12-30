@@ -17,7 +17,7 @@
       - role: pihole
         tags: [ pihole ]
         FTLCONF_LOCAL_IPV4: 10.0.0.233
-        host_name: Secondary pihole
+        host_name: nut-proxy
         container_name: SecondaryPihole
         tags: [ secondary-pihole ]
 
