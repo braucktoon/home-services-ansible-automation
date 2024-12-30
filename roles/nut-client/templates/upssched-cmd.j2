@@ -5,8 +5,8 @@
           ;;
        earlyshutdown)
           logger -t upssched-cmd "UPS on battery too long, early shutdown"
-          ;;
           /usr/sbin/upsmon -c fsd
+          ;;
        shutdowncritical)
           logger -t upssched-cmd "UPS on battery critical, forced shutdown"
           ;;

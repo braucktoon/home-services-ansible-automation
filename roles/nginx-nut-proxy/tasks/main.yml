@@ -5,6 +5,12 @@
     state: present
   become: true
 
+- name: Install nginx extras package.
+  ansible.builtin.apt:
+    name: nginx-extras
+    state: present
+  become: true
+
 - name: Ensure line is present in nginx.conf file
   lineinfile:
     path: /etc/nginx/nginx.conf
