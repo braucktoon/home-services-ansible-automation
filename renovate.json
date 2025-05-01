@@ -1,22 +1,29 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:base"],
   "regexManagers": [
     {
-      "fileMatch": "(^|/)(?:docker-)?compose[^/]*\\.ya?ml\\.j2$",
+      "fileMatch": [
+        "(^|/)(?:docker-)?compose[^/]*\\.ya?ml(\\.j2)?$"
+      ],
       "matchStrings": [
-        "(?:image: )(?<depName>.*?)(?::(?<currentValue>.*?))?(?:@(?<currentDigest>sha256:[a-f0-9]+))?\\n"
+        "image:\\s*(?<depName>[\\w./-]+)(?::(?<currentValue>[\\w.-]+))?(?:@(?<currentDigest>sha256:[a-f0-9]{64}))?"
       ],
       "datasourceTemplate": "docker",
-      "versioningTemplate": "docker"
+      "versioningTemplate": "loose"
     }
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["patch","minor","digest"],
-      "matchCurrentVersion": "!/^0/",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "lscr.io/linuxserver/plex",
+        "koush/scrypted"
+      ],
+      "versioning": "loose"
+    },
+    {
+      "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true,
       "ignoreTests": true
     },
@@ -26,4 +33,4 @@
     }
   ],
   "platformAutomerge": true
-} 
+}
