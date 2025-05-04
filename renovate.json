@@ -9,8 +9,7 @@
       "matchStrings": [
         "image:\\s*(?<depName>[\\w./-]+)(?::(?<currentValue>[\\w.-]+))?(?:@(?<currentDigest>sha256:[a-f0-9]{64}))?"
       ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "loose"
+      "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
