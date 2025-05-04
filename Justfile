@@ -3,3 +3,6 @@ run_media:
 
 cd_services:
     ansible-playbook cd-services.yml -i inventory --vault-password-file ~/vaultpw
+
+jenkins:
+    ansible-playbook jenkins.yml -i inventory --vault-password-file ~/vaultpw
