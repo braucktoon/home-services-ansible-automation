@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Log output to a log file
+exec >> /var/log/media-startup.log 2>&1
+set -x  # Enable debug output
+
 # Define NFS share and local mount point
 NFS_SHARE_MEDIA="10.0.0.2:/volume1/media"
 LOCAL_MOUNT_POINT_MEDIA="/volume1/media"
@@ -22,24 +26,33 @@ if [ ! -d "$LOCAL_MOUNT_POINT_DOCKER" ]; then
     mkdir -p "$LOCAL_MOUNT_POINT_DOCKER"
 fi
 
-# Mount the NFS share
-echo "Mounting NFS share..."
-mount -t nfs $NFS_SHARE_MEDIA $LOCAL_MOUNT_POINT_MEDIA
-mount -t nfs $NFS_SHARE_DOCKER $LOCAL_MOUNT_POINT_DOCKER
+# Retry logic for mounting the NFS share for MEDIA
+for i in {1..5}; do
+    mount -t nfs $NFS_SHARE_MEDIA $LOCAL_MOUNT_POINT_MEDIA && break
+    echo "Retrying mount for MEDIA in 3 seconds... attempt $i"
+    sleep 3
+done
 
-# Check if the mount was successful
+# Check if the mount was successful for MEDIA
 if mountpoint -q "$LOCAL_MOUNT_POINT_MEDIA"; then
     echo "NFS MEDIA share mounted successfully."
 else
-    echo "Failed to mount NFS MEDIA share."
+    echo "Failed to mount NFS MEDIA share after 5 attempts."
     exit 1
 fi
 
-# Check if the mount was successful
+# Retry logic for mounting the NFS share for DOCKER
+for i in {1..5}; do
+    mount -t nfs $NFS_SHARE_DOCKER $LOCAL_MOUNT_POINT_DOCKER && break
+    echo "Retrying mount for DOCKER in 3 seconds... attempt $i"
+    sleep 3
+done
+
+# Check if the mount was successful for DOCKER
 if mountpoint -q "$LOCAL_MOUNT_POINT_DOCKER"; then
     echo "NFS DOCKER share mounted successfully."
 else
-    echo "Failed to mount NFS DOCKER share."
+    echo "Failed to mount NFS DOCKER share after 5 attempts."
     exit 1
 fi
 

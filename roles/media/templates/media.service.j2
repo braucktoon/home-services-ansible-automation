@@ -1,11 +1,10 @@
 [Unit]
-Description=My media Service
+After=network-online.target remote-fs.target docker.service
+Wants=network-online.target
 Requires=docker.service
-After=docker.service
 
 [Service]
-Type=oneshot
-ExecStart=/home/media/startmedia.sh
-
-[Install]
-WantedBy=multi-user.target
+User=
+Group=
+ExecStart=
+ExecStart=/usr/bin/env bash /home/media/startmedia.sh
