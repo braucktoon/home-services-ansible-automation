@@ -15,11 +15,14 @@
   "packageRules": [
     {
       "matchDatasources": ["docker"],
-      "matchPackageNames": [
-        "lscr.io/linuxserver/plex",
-        "koush/scrypted"
-      ],
+      "matchPackageNames": ["lscr.io/linuxserver/plex"],
       "versioning": "loose"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["koush/scrypted"],
+      "versioning": "loose",
+      "allowedTags": ["full"]
     },
     {
       "matchUpdateTypes": ["patch", "minor", "digest"],
