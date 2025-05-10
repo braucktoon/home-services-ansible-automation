@@ -19,11 +19,6 @@
       "versioning": "loose"
     },
     {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["koush/scrypted"],
-      "enabled": false
-    },
-    {
       "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true,
       "ignoreTests": true
