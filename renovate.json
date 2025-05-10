@@ -22,7 +22,7 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["koush/scrypted"],
       "versioning": "loose",
-      "allowedVersions": "^(full|.*-full.*)$"
+      "allowedTags": ["^full$"]
     },
     {
       "matchUpdateTypes": ["patch", "minor", "digest"],
