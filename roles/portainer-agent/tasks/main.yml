@@ -3,7 +3,7 @@
 - name: Make sure the portainer-agent container is created and running
   community.general.docker_container:
     name: "portainer_agent"
-    image: portainer/agent:2.29.2
+    image: portainer/agent:2.30.0
     pull: yes
     state: "started"
     restart_policy: always
