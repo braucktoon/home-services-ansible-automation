@@ -123,6 +123,14 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
+- name: Make gluetun directory
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/{{gluetun_container_name}}/config"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
 - name: Copy docker-compose.yml file in place.
   template:
     src: "docker-compose.yml.j2"
@@ -174,6 +182,33 @@
     job: "/usr/local/bin/backup-media.sh"
     state: present
   become: false
+
+- name: Copy gluetun ovpn config file in place.
+  template:
+    src: "AirVPN_Switzerland_UDP-443-Entry3.ovpn"
+    dest: "{{ docker_dir }}/{{gluetun_container_name}}/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  become: true
+
+- name: Copy gluetun key file in place.
+  template:
+    src: "client.key"
+    dest: "{{ docker_dir }}/{{gluetun_container_name}}/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  become: true
+
+- name: Copy gluetun crt file in place.
+  template:
+    src: "client.crt"
+    dest: "{{ docker_dir }}/{{gluetun_container_name}}/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  become: true
 
 - name: Copy media.service script file in place.
   template:

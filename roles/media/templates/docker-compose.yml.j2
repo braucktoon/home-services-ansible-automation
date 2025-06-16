@@ -27,11 +27,13 @@ services:
         # sabnzbd port
         - 9090
     environment:
-      - VPN_SERVICE_PROVIDER=mullvad
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY={{WIREGUARD_PRIVATE_KEY}}
-      - WIREGUARD_ADDRESSES=10.64.120.124/32
-      - SERVER_CITIES=Zurich
+      - VPN_SERVICE_PROVIDER=airvpn
+      - SERVER_COUNTRIES=Switzerland
+      - FIREWALL_VPN_INPUT_PORTS=52958
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - {{ docker_dir }}/{{gluetun_container_name}}/config:/gluetun
     networks:
       media:
         ipv4_address: 10.0.0.3
