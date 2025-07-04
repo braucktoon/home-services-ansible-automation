@@ -58,7 +58,7 @@ pipeline {
                             whoami
                             ansible-galaxy collection install community.docker
 
-                            ansible-playbook -i inventory --vault-password-file /tmp/vaultpw.txt home-services-ansible-automation/cd-services.yml --private-key /home/pi/.ssh/id_rsa
+                            ansible-playbook -i inventory --vault-password-file /tmp/vaultpw.txt /workspace/cd-services.yml --private-key /home/pi/.ssh/id_rsa
 
                             rm -rf ~/internet-pi-src
                             mkdir -p ~/internet-pi-src
