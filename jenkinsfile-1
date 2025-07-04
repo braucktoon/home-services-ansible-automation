@@ -53,6 +53,12 @@ pipeline {
                         -w /workspace \
                         myimage:latest \
                         sh -c '
+                            echo "== WHOAMI =="
+                            whoami
+                            echo "== PWD =="
+                            pwd
+                            echo "== LS /workspace =="
+                            ls -l /workspace         
                             set -e
                             ansible --version
                             whoami
