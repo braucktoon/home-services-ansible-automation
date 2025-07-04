@@ -31,6 +31,7 @@
       - "{{ docker_dir }}/{{container_name}}:/var/jenkins_home"
       - "/usr/bin/docker:/usr/bin/docker"
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/usr/libexec/docker/cli-plugins/docker-buildx:/usr/libexec/docker/cli-plugins/docker-buildx"
     restart_policy: always
   become: false
 

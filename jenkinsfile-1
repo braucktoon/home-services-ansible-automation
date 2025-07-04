@@ -28,7 +28,7 @@ pipeline {
                     // Build your Docker image using buildx
                     sh """
                     docker buildx build \
-                        --platform linux/amd64,linux/arm64 \
+                        --platform linux/arm64 \
                         -t myimage:latest \
                         --load .  # or --push if you want to push to a registry
                     """
