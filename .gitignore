@@ -2,7 +2,3 @@
 .DS_Store
 .vaultpw
 *.pub
-*.ovpn
-*.key
-*.crt
-
