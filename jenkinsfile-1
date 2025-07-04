@@ -10,58 +10,65 @@ pipeline {
         stage('Setup buildx') {
             steps {
                 script {
-                    // Create and bootstrap buildx builder if not present
                     sh '''
-                    docker buildx create --use --name mybuilder || docker buildx use mybuilder
+                    docker buildx create --name mybuilder --use || docker buildx use mybuilder
                     docker buildx inspect --bootstrap
                     '''
                 }
             }
         }
 
-        stage('Build image with buildx (optional)') {
+        stage('Build image with buildx') {
             when {
                 expression { return fileExists('Dockerfile') }
             }
             steps {
                 script {
-                    // Build your Docker image using buildx
                     sh """
                     docker buildx build \
                         --platform linux/arm64 \
                         -t myimage:latest \
-                        --load .  # or --push if you want to push to a registry
+                        --load .
                     """
                 }
             }
         }
 
-        stage('Test') {
+        stage('Test using built image') {
             steps {
                 script {
                     env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP
                     env.HOME = env.WORKSPACE
 
+                    // Display environment for debug
                     sh 'printenv'
 
+                    // Run Ansible and setup inside the built container
                     sh """
-                    ansible --version
-                    whoami
-                    ansible-galaxy collection install community.docker
+                    docker run --rm \
+                        -v /home/pi/.ssh:/home/pi/.ssh:ro \
+                        -v \$WORKSPACE:/workspace \
+                        -e VAULT_PW="$VAULT_PW" \
+                        myimage:latest \
+                        sh -c '
+                            ansible --version
+                            whoami
+                            ansible-galaxy collection install community.docker
 
-                    ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/id_rsa
+                            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/id_rsa
 
-                    rm -rf ~/internet-pi-src
-                    mkdir -p ~/internet-pi-src
-                    git clone https://github.com/geerlingguy/internet-pi.git ~/internet-pi-src/
-                    cp -r ~/internet-pi/config.yml ~/internet-pi-src/
-                    cp -r ~/internet-pi/inventory.ini ~/internet-pi-src/
-                    cp -r ~/internet-pi/templates/docker-compose.yml.j2 ~/internet-pi-src/templates/
+                            rm -rf ~/internet-pi-src
+                            mkdir -p ~/internet-pi-src
+                            git clone https://github.com/geerlingguy/internet-pi.git ~/internet-pi-src/
+                            cp -r ~/internet-pi/config.yml ~/internet-pi-src/
+                            cp -r ~/internet-pi/inventory.ini ~/internet-pi-src/
+                            cp -r ~/internet-pi/templates/docker-compose.yml.j2 ~/internet-pi-src/templates/
 
-                    cd ~/internet-pi-src
-                    ansible-galaxy collection install -r requirements.yml --force
+                            cd ~/internet-pi-src
+                            ansible-galaxy collection install -r requirements.yml --force
 
-                    ansible-playbook --vault-password-file "$VAULT_PW" main.yml --private-key /home/pi/.ssh/id_rsa
+                            ansible-playbook --vault-password-file "$VAULT_PW" main.yml --private-key /home/pi/.ssh/id_rsa
+                        '
                     """
                 }
             }
