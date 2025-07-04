@@ -1,0 +1,112 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_BUILDKIT = '1'
+        VAULT_PW = credentials('vaultpw')  // Injects vault password as a secret variable
+    }
+
+    stages {
+        stage('Setup buildx') {
+            steps {
+                script {
+                    sh '''
+                    docker buildx create --name mybuilder --use || docker buildx use mybuilder
+                    docker buildx inspect --bootstrap
+                    '''
+                }
+            }
+        }
+
+        stage('Build Ansible Image with buildx') {
+            when {
+                expression { return fileExists('Dockerfile') }
+            }
+            steps {
+                script {
+                    sh """
+                    docker buildx build \
+                        --platform linux/arm64 \
+                        -t myimage:latest \
+                        --load .
+                    """
+                }
+            }
+        }
+
+        stage('Test and Deploy using Built Image') {
+            steps {
+                script {
+                    env.DEFAULT_LOCAL_TMP = env.WORKSPACE_TMP
+                    env.HOME = env.WORKSPACE
+
+                    // Write the vault password to a temporary file to pass into the container
+                    writeFile file: 'vaultpw.txt', text: VAULT_PW
+
+                    sh 'printenv'
+
+                    sh """
+                    docker run --rm \
+                        -v /home/pi/.ssh:/home/pi/.ssh:ro \
+                        -v \$WORKSPACE:/workspace \
+                        -v \$WORKSPACE/vaultpw.txt:/tmp/vaultpw.txt:ro \
+                        -w /workspace \
+                        myimage:latest \
+                        sh -c '
+                            echo "== WHOAMI =="
+                            whoami
+                            echo "== PWD =="
+                            pwd
+                            echo "== LS /workspace =="
+                            ls -l /workspace         
+                            set -e
+                            ansible --version
+                            whoami
+                            ansible-galaxy collection install community.docker
+
+                            ansible-playbook -i inventory --vault-password-file /tmp/vaultpw.txt /workspace/cd-services.yml --private-key /home/pi/.ssh/id_rsa
+
+                            rm -rf ~/internet-pi-src
+                            mkdir -p ~/internet-pi-src
+                            git clone https://github.com/geerlingguy/internet-pi.git ~/internet-pi-src/
+                            cp -r ~/internet-pi/config.yml ~/internet-pi-src/ || true
+                            cp -r ~/internet-pi/inventory.ini ~/internet-pi-src/ || true
+                            cp -r ~/internet-pi/templates/docker-compose.yml.j2 ~/internet-pi-src/templates/ || true
+
+                            cd ~/internet-pi-src
+                            ansible-galaxy collection install -r requirements.yml --force
+
+                            ansible-playbook --vault-password-file /tmp/vaultpw.txt main.yml --private-key /home/pi/.ssh/id_rsa
+                        '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed. Cleaning up temporary files.'
+            // Clean up the vault password file after the run
+            sh 'rm -f vaultpw.txt || true'
+        }
+        success {
+            emailext attachLog: true,
+                     body: '$RUN_CHANGES_DISPLAY_URL',
+                     subject: '$BUILD_STATUS! - $PROJECT_NAME - Build # $BUILD_NUMBER',
+                     to: '$DEFAULT_RECIPIENTS'
+        }
+        failure {
+            emailext attachLog: true,
+                     body: '$RUN_CHANGES_DISPLAY_URL',
+                     subject: '$BUILD_STATUS! - $PROJECT_NAME - Build # $BUILD_NUMBER',
+                     to: '$DEFAULT_RECIPIENTS'
+        }
+        unstable {
+            echo 'Build marked unstable.'
+        }
+        changed {
+            echo 'Build status changed since the last run.'
+        }
+    }
+}
