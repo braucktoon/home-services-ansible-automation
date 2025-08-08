@@ -10,7 +10,7 @@
 - name: Make sure the {{container_name}} container is created and running
   community.general.docker_container:
     name: "{{container_name}}"
-    image: cbcrowe/pihole-unbound:2024.03.2
+    image: mpgirro/pihole-unbound:2025.07.01
     pull: yes
     state: "started"
     hostname: "{{host_name}}"
