@@ -29,7 +29,11 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - SERVER_COUNTRIES=Switzerland
-      - FIREWALL_VPN_INPUT_PORTS=52958
+      - FIREWALL_VPN_INPUT_PORTS=9352
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY={{ WIREGUARD_PRIVATE_KEY }}
+      - WIREGUARD_PRESHARED_KEY={{ WIREGUARD_PRE_SHARED_KEY }}
+      - WIREGUARD_ADDRESSES={{ WIREGUARD_ADDRESS }}
     devices:
       - /dev/net/tun:/dev/net/tun
     volumes:
