@@ -62,7 +62,7 @@ services:
     container_name: {{qbt_container_name}}
     user: "1000:1000"
     restart: on-failure
-    image: lscr.io/linuxserver/qbittorrent:5.1.2
+    image: lscr.io/linuxserver/qbittorrent:20.04.1
     environment:
       - QBITTORRENT__PORT=8080
     volumes:
