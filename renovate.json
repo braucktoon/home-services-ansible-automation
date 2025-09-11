@@ -19,6 +19,26 @@
       "versioning": "loose"
     },
     {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["lscr.io/linuxserver/prowlarr"],
+      "versioning": "loose"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["lscr.io/linuxserver/sonarr"],
+      "versioning": "loose"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["lscr.io/linuxserver/sabnzbd"],
+      "versioning": "loose"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["lscr.io/linuxserver/radarr"],
+      "versioning": "loose"
+    },
+    {
       "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true,
       "ignoreTests": true
