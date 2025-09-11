@@ -183,33 +183,6 @@
     state: present
   become: false
 
-- name: Copy gluetun ovpn config file in place.
-  template:
-    src: "AirVPN_Switzerland_UDP-443-Entry3.ovpn"
-    dest: "{{ docker_dir }}/{{gluetun_container_name}}/config"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0644
-  become: true
-
-- name: Copy gluetun key file in place.
-  template:
-    src: "client.key"
-    dest: "{{ docker_dir }}/{{gluetun_container_name}}/config"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0644
-  become: true
-
-- name: Copy gluetun crt file in place.
-  template:
-    src: "client.crt"
-    dest: "{{ docker_dir }}/{{gluetun_container_name}}/config"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0644
-  become: true
-
 - name: Copy media.service script file in place.
   template:
     src: "media.service.j2"
