@@ -39,6 +39,11 @@
       "versioning": "loose"
     },
     {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["flaresolverr/flaresolverr"],
+      "versioning": "loose"
+    },
+    {
       "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true,
       "ignoreTests": true

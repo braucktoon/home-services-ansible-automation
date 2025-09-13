@@ -22,10 +22,6 @@ services:
     ports:
         # QBT UI Port
         - 8080:8080
-        # Prowlarr port
-        - 9696:9696
-        # sabnzbd port
-        - 9090
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - SERVER_COUNTRIES=Switzerland
@@ -43,7 +39,7 @@ services:
         ipv4_address: 10.0.0.3
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:1.37.0.5076-ls124
+    image: lscr.io/linuxserver/prowlarr:2.0.5.5160-ls125
     user: "1000:1000"
     restart: on-failure
     container_name: {{prowlarr_container_name}}
@@ -52,11 +48,9 @@ services:
         - PROWLARR__PORT=9696
     volumes:
       - {{docker_dir}}/{{prowlarr_container_name}}/config:/config
-    network_mode: service:gluetun
-    depends_on:
-      - gluetun
-      - qbittorrent
-      - sabnzbd
+    networks:
+      media:
+        ipv4_address: 10.0.0.14
 
   qbittorrent:
     container_name: {{qbt_container_name}}
@@ -108,7 +102,7 @@ services:
 
   radarr:
     container_name: {{radarr_container_name}}
-    image: lscr.io/linuxserver/radarr:5.26.2.10099-ls280
+    image: lscr.io/linuxserver/radarr:5.27.5.10198-ls282
     user: "1000:1000"
     restart: on-failure
     environment:
@@ -142,3 +136,12 @@ services:
     devices:
       - /dev/dri:/dev/dri       # This allows Plex to access the Intel GPU for hardware encoding
 
+  flaresolverr:
+    image: flaresolverr/flaresolverr:v3.4.0
+    container_name: flaresolverr
+    restart: unless-stopped
+    ports:
+      - "8191:8191"
+    networks:
+      media:
+        ipv4_address: 10.0.0.16
