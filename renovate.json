@@ -19,13 +19,7 @@
       ],
       "versioning": "loose",
       "ignoreUnstable": true,
-      "ignoreVersions": [
-        "/(?i)nightly/",
-        "/(?i)develop/",
-        "/(?i)preview/",
-        "/(?i)beta/",
-        "/(?i)rc/"
-      ],
+      "allowedVersions": "!/(?i)(nightly|develop|preview|beta|rc)/",
       "pinDigests": true
     },
     {
