@@ -39,7 +39,7 @@ services:
         ipv4_address: 10.0.0.3
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:2.1.2-nightly
+    image: lscr.io/linuxserver/prowlarr:2.0.5.5160-LS126
     user: "1000:1000"
     restart: on-failure
     container_name: {{prowlarr_container_name}}
@@ -102,7 +102,7 @@ services:
 
   radarr:
     container_name: {{radarr_container_name}}
-    image: lscr.io/linuxserver/radarr:5.27.5.10198
+    image: lscr.io/linuxserver/radarr:5.27.5.10198-LS283
     user: "1000:1000"
     restart: on-failure
     environment:

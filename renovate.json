@@ -11,31 +11,23 @@
     }
   ],
   "packageRules": [
-    /* linuxserver stack — allow only stable tags */
     {
       "matchDatasources": ["docker"],
       "matchPackagePatterns": [
-        "^lscr\\.io/linuxserver/(sonarr|radarr|prowlarr|sabnzbd)$"
+        "^lscr\\.io/linuxserver/(radarr|prowlarr|sonarr|sabnzbd|plex)$",
+        "^flaresolverr/flaresolverr$"
       ],
       "versioning": "loose",
-      "allowedVersions": "/^(?!.*(?:nightly|develop|preview|beta|rc)).*$/i"
+      "ignoreUnstable": true,
+      "ignoreVersions": [
+        "/(?i)nightly/",
+        "/(?i)develop/",
+        "/(?i)preview/",
+        "/(?i)beta/",
+        "/(?i)rc/"
+      ],
+      "pinDigests": true
     },
-
-    /* plex & flaresolverr rules (also keep to stable) */
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["lscr.io/linuxserver/plex"],
-      "versioning": "loose",
-      "allowedVersions": "/^(?!.*(?:nightly|develop|preview|beta|rc)).*$/i"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["flaresolverr/flaresolverr"],
-      "versioning": "loose",
-      "allowedVersions": "/^(?!.*(?:nightly|develop|preview|beta|rc)).*$/i"
-    },
-
-    /* safe auto-merge */
     {
       "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true,
