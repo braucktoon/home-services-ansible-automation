@@ -3,9 +3,7 @@
   "extends": ["config:base"],
   "regexManagers": [
     {
-      "fileMatch": [
-        "(^|/)(?:docker-)?compose[^/]*\\.ya?ml(\\.j2)?$"
-      ],
+      "fileMatch": ["(^|/)(?:docker-)?compose[^/]*\\.ya?ml(\\.j2)?$"],
       "matchStrings": [
         "image:\\s*(?<depName>[\\w./-]+)(?::(?<currentValue>[\\w.-]+))?(?:@(?<currentDigest>sha256:[a-f0-9]{64}))?"
       ],
@@ -13,36 +11,31 @@
     }
   ],
   "packageRules": [
+    /* linuxserver stack — allow only stable tags */
+    {
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": [
+        "^lscr\\.io/linuxserver/(sonarr|radarr|prowlarr|sabnzbd)$"
+      ],
+      "versioning": "loose",
+      "allowedVersions": "/^(?!.*(?:nightly|develop|preview|beta|rc)).*$/i"
+    },
+
+    /* plex & flaresolverr rules (also keep to stable) */
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": ["lscr.io/linuxserver/plex"],
-      "versioning": "loose"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["lscr.io/linuxserver/prowlarr"],
-      "versioning": "loose"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["lscr.io/linuxserver/sonarr"],
-      "versioning": "loose"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["lscr.io/linuxserver/sabnzbd"],
-      "versioning": "loose"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["lscr.io/linuxserver/radarr"],
-      "versioning": "loose"
+      "versioning": "loose",
+      "allowedVersions": "/^(?!.*(?:nightly|develop|preview|beta|rc)).*$/i"
     },
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": ["flaresolverr/flaresolverr"],
-      "versioning": "loose"
+      "versioning": "loose",
+      "allowedVersions": "/^(?!.*(?:nightly|develop|preview|beta|rc)).*$/i"
     },
+
+    /* safe auto-merge */
     {
       "matchUpdateTypes": ["patch", "minor", "digest"],
       "automerge": true,
