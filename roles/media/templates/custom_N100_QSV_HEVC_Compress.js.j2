@@ -1,0 +1,165 @@
+/* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
+const details = () => ({
+  id: 'Custom_N100_QSV_HEVC_Compress',
+  Stage: 'Pre-processing',
+  Name: 'N100 QSV HEVC Compression (Under 15GB)',
+  Type: 'Video',
+  Operation: 'Transcode',
+  Description: 'Compress videos over 20GB using Intel QSV HEVC to get under 15GB target',
+  Version: '1.3',
+  Tags: 'pre-processing,ffmpeg,qsv,hevc,h265',
+  Inputs: [
+    {
+      name: 'target_size_gb',
+      type: 'number',
+      defaultValue: 15,
+      inputUI: {
+        type: 'text',
+      },
+      tooltip: 'Target file size in GB (will skip if already under this)',
+    },
+    {
+      name: 'global_quality',
+      type: 'number',
+      defaultValue: 23,
+      inputUI: {
+        type: 'text',
+      },
+      tooltip: 'QSV quality (18-28, lower=better quality/larger file)',
+    },
+    {
+      name: 'audio_handling',
+      type: 'string',
+      defaultValue: 'english_only',
+      inputUI: {
+        type: 'dropdown',
+        options: [
+          'english_only',
+          'english_compress',
+          'first_only',
+          'keep_all',
+        ],
+      },
+      tooltip: 'english_only=keep English tracks only, english_compress=English to EAC3, first_only=keep first track, keep_all=all tracks',
+    },
+    {
+      name: 'preferred_language',
+      type: 'string',
+      defaultValue: 'eng',
+      inputUI: {
+        type: 'text',
+      },
+      tooltip: 'Language code to keep (eng, spa, fra, etc)',
+    },
+  ],
+});
+
+const plugin = (file, librarySettings, inputs, otherArguments) => {
+  const lib = require('../methods/lib')();
+  inputs = lib.loadDefaultValues(inputs, details);
+
+  const response = {
+    processFile: false,
+    preset: '',
+    container: '.mkv',
+    handBrakeMode: false,
+    FFmpegMode: true,
+    reQueueAfter: true,
+    infoLog: '',
+  };
+
+  let fileSizeMB = file.file_size;
+  if (!fileSizeMB && file.meta && file.meta.Size) {
+    fileSizeMB = file.meta.Size;
+  }
+
+  const fileSizeGB = fileSizeMB / 1024;
+  const targetSizeGB = parseFloat(inputs.target_size_gb);
+
+  response.infoLog += `File size: ${fileSizeGB.toFixed(2)}GB (target: ${targetSizeGB}GB)\n`;
+
+  if (fileSizeGB <= targetSizeGB) {
+    response.infoLog += `File is already under ${targetSizeGB}GB target\n`;
+    return response;
+  }
+
+  const videoStream = file.ffProbeData.streams.find(s => s.codec_type === 'video');
+  if (!videoStream) {
+    response.infoLog += 'No video stream found\n';
+    return response;
+  }
+
+  if (videoStream.codec_name === 'hevc' && fileSizeGB <= targetSizeGB * 1.5) {
+    response.infoLog += `Already HEVC and reasonably sized (${fileSizeGB.toFixed(2)}GB)\n`;
+    return response;
+  }
+
+  response.processFile = true;
+
+  const bitrateMap = {
+    20: '25M', 21: '22M', 22: '20M', 23: '18M', 24: '15M',
+    25: '12M', 26: '10M', 27: '8M', 28: '6M'
+  };
+  const bitrate = bitrateMap[inputs.global_quality] || '15M';
+  const bufsize = bitrate;
+
+  // Find audio streams
+  const audioStreams = file.ffProbeData.streams.filter(s => s.codec_type === 'audio');
+  
+  // Find English audio tracks (check both language codes)
+  const preferredLang = inputs.preferred_language.toLowerCase();
+  const englishStreams = audioStreams.filter(s => {
+    const lang = (s.tags && (s.tags.language || s.tags.LANGUAGE || ''));
+    return lang.toLowerCase() === preferredLang || 
+           lang.toLowerCase() === 'en' || 
+           lang.toLowerCase() === 'english';
+  });
+
+  let audioArgs = '';
+  
+  switch (inputs.audio_handling) {
+    case 'english_only':
+      if (englishStreams.length > 0) {
+        // Map all English audio tracks
+        const audioMaps = englishStreams.map(s => `-map 0:${s.index}`).join(' ');
+        audioArgs = `-map 0:v ${audioMaps} -map 0:s -c:a copy`;
+        response.infoLog += `Found ${englishStreams.length} English audio track(s), keeping them\n`;
+      } else {
+        // Fallback to first audio if no English found
+        audioArgs = '-map 0:v -map 0:a:0 -map 0:s -c:a copy';
+        response.infoLog += 'No English audio found, keeping first track\n';
+      }
+      break;
+      
+    case 'english_compress':
+      if (englishStreams.length > 0) {
+        // Map first English track and compress it
+        audioArgs = `-map 0:v -map 0:${englishStreams[0].index} -map 0:s -c:a eac3 -b:a 640k`;
+        response.infoLog += 'Converting first English track to EAC3 640k\n';
+      } else {
+        audioArgs = '-map 0:v -map 0:a:0 -map 0:s -c:a eac3 -b:a 640k';
+        response.infoLog += 'No English audio found, compressing first track\n';
+      }
+      break;
+      
+    case 'first_only':
+      audioArgs = '-map 0:v -map 0:a:0 -map 0:s -c:a copy';
+      response.infoLog += 'Keeping only first audio track\n';
+      break;
+      
+    case 'keep_all':
+    default:
+      audioArgs = '-map 0 -c:a copy';
+      response.infoLog += 'Keeping all audio tracks\n';
+      break;
+  }
+
+  response.preset = `-init_hw_device qsv=hw -hwaccel qsv -hwaccel_output_format qsv, ${audioArgs} -c:v hevc_qsv -preset medium -b:v ${bitrate} -maxrate ${bitrate} -bufsize ${bufsize} -c:s copy -max_muxing_queue_size 9999`;
+
+  response.infoLog += `Compressing with QSV HEVC (quality ${inputs.global_quality}, bitrate ${bitrate})\n`;
+
+  return response;
+};
+
+module.exports.details = details;
+module.exports.plugin = plugin;
