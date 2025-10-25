@@ -2,7 +2,7 @@
 - name: Make sure the node-exporter container is created and running
   community.general.docker_container:
     name: "node-exporter"
-    image: prom/node-exporter:v1.10.1
+    image: prom/node-exporter:v1.10.2
     privileged: true
     pull: yes
     state: "started"
