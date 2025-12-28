@@ -6,3 +6,6 @@ cd_services:
 
 jenkins:
     ansible-playbook jenkins.yml -i inventory --vault-password-file .vaultpw
+
+nut-proxy:
+     ansible-playbook nut-proxy.yml -i inventory --vault-password-file .vaultpw
