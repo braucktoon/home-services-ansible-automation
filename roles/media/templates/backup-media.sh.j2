@@ -1,15 +1,5 @@
 #!/bin/bash
 
-DEST_FOLDER='{{backups_dir}}/jellyfin'
-DEST_FILE="jellyfin-backup-$(date +'%F_%R').tar"
-BACKUP_CMD="/bin/tar -rvf"
-docker stop media-jellyfin
-sudo $BACKUP_CMD $DEST_FOLDER/$DEST_FILE /data/media/media-jellyfin
-docker start media-jellyfin
-/bin/gzip $DEST_FOLDER/$DEST_FILE
-/usr/bin/find $DEST_FOLDER -mtime +98 -delete
-rsync -auvz --delete $DEST_FOLDER/ nas:/volume1/backups/media/jellyfin
-
 DEST_FOLDER='{{backups_dir}}/qbt'
 DEST_FILE="qbt-backup-$(date +'%F_%R').tar"
 BACKUP_CMD="/bin/tar -rvf"
