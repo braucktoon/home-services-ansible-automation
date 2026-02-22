@@ -10,6 +10,8 @@
         tags: [ nut-client ]
       - role: docker
         tags: [ docker ]
+      - role: backup-common
+        tags: [ backup-common ]
 
 - name: ssh keys
   hosts: [ssh_hosts]
@@ -41,14 +43,14 @@
   tasks:
     - name: Add a host in the configuration for each client host the build server needs to access
       community.general.ssh_config:
-        host: "{{ hostvars[item].ansible_host }}"
-        hostname: "{{ item }}"
+        host: "{{ item }}"
+        hostname: "{{ hostvars[item].ansible_host }}"
         identity_file: "~/.ssh/{{ ssh_key_filename }}"
         port: '22'
         identities_only: true
         remote_user: "{{ hostvars[item].ansible_user }}"
         ssh_config_file: ~/.ssh/config
-      with_items: 
+      with_items:
         - "{{ groups['build_client_hosts'] }}"
 
 - name: keepalived-master service
@@ -74,6 +76,8 @@
         tags: [ keepalived-backup ]
       - role: docker
         tags: [ docker ]
+      - role: backup-common
+        tags: [ backup-common ]
   tasks:
     - name: Copy nut client configuration files in place.
       template:

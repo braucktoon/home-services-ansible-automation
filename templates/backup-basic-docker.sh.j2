@@ -1,11 +1,41 @@
 #!/bin/bash
+set -euo pipefail
 
-DEST_FOLDER='{{backups_dir}}/{{container_name}}'
-DEST_FILE="{{container_name}}-backup-$(date +'%F_%R').tar"
-BACKUP_CMD="/bin/tar -rvf"
-docker stop {{container_name}}
-sudo $BACKUP_CMD $DEST_FOLDER/$DEST_FILE {{docker_dir}}/{{container_name}}
-docker start {{container_name}}
-/bin/gzip $DEST_FOLDER/$DEST_FILE
-/usr/bin/find $DEST_FOLDER -mtime +98 -delete
-rsync -auvz --delete $DEST_FOLDER/ nas:/volume1/backups/{{container_name}}
+SCRIPT_NAME="{{ container_name }}"
+source /usr/local/lib/backup-lib.sh
+
+DEST_FOLDER="{{ backups_dir }}/{{ container_name }}"
+DEST_FILE="{{ container_name }}-backup-$(date +'%F_%H%M').tar.gz"
+
+log "Starting backup."
+
+# Pre-flight checks
+check_disk_space "{{ backups_dir }}"
+check_nas
+require_dir "$DEST_FOLDER"
+
+# Stop container before archiving to ensure data consistency
+log "Stopping container {{ container_name }}..."
+docker stop {{ container_name }} || die "Failed to stop container {{ container_name }}."
+
+# Create compressed archive; restart container even on failure
+log "Creating archive..."
+if ! sudo /bin/tar -czf "$DEST_FOLDER/$DEST_FILE" "{{ docker_dir }}/{{ container_name }}"; then
+    docker start {{ container_name }} || true
+    die "Archive failed for {{ container_name }}."
+fi
+
+log "Restarting container {{ container_name }}..."
+docker start {{ container_name }} || log "WARNING: Failed to restart {{ container_name }}."
+
+# Verify the archive is non-empty before pruning and syncing
+verify_backup_file "$DEST_FOLDER/$DEST_FILE"
+
+find "$DEST_FOLDER" -name "*.tar.gz" -mtime +98 -delete
+log "Old backups pruned."
+
+log "Syncing to NAS..."
+rsync -az --delete "$DEST_FOLDER/" "nas:/volume1/backups/{{ container_name }}" \
+    || die "rsync to NAS failed."
+
+notify_success "{{ container_name }} backed up successfully."

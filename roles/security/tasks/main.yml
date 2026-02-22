@@ -1,4 +1,14 @@
 ---
+# Remove ALL docker apt sources before apt-get update. The docker role will
+# recreate a single, clean entry. We use grep -rl because the Ansible find
+# module's 'contains' filter does not reliably handle multiple patterns.
+- name: Remove all docker apt source files and any docker lines from sources.list
+  ansible.builtin.shell: |
+    grep -rl "download.docker.com" /etc/apt/sources.list.d/ 2>/dev/null | xargs rm -f
+    [ -f /etc/apt/sources.list ] && sed -i '/download\.docker\.com/d' /etc/apt/sources.list || true
+  become: true
+  changed_when: false
+
 # update the system
 - name: Run the equivalent of "apt-get update" as a separate step
   ansible.builtin.apt:
@@ -25,7 +35,9 @@
 # Install unattended-upgrades
 - name: Install unattended upgrades package.
   ansible.builtin.apt:
-    name: unattended-upgrades
+    name:
+      - unattended-upgrades
+      - python3-paramiko
     state: present
 
 - name: Ensure that unattended-upgrades service is started and enabled on boot

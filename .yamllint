@@ -1,0 +1,25 @@
+---
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+  # Existing playbooks use [ tag ] with spaces — allow it
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+  # Existing playbooks have mixed indentation — warn instead of error
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+    level: warning
+  truthy:
+    allowed-values: ["true", "false", "yes", "no"]
+  comments:
+    min-spaces-from-content: 1
+
+ignore: |
+  internet-pi/
+  .ansible/

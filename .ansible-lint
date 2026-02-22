@@ -1,0 +1,13 @@
+---
+profile: basic
+
+exclude_paths:
+  - internet-pi/
+  - .ansible/
+
+warn_list:
+  - role-name          # our role names use hyphens, which is fine
+  - no-changed-when    # backup/install tasks legitimately don't need changed_when
+
+skip_list:
+  - yaml[truthy]       # handled by yamllint instead

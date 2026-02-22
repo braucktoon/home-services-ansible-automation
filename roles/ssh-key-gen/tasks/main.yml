@@ -19,8 +19,8 @@
     user: "{{ ansible_user }}"
     state: present
     key: "{{ lookup('file','buffer/{{item}}-{{ ssh_key_filename }}.pub')}}"
-  when: "{{ item != inventory_hostname }}"
-  with_items: 
+  when: item != inventory_hostname
+  with_items:
     - "{{ groups['ssh_hosts'] }}"
 
 - name: Copy the key add to authorized_keys using Ansible module - special case for build server ssh to itself
@@ -28,8 +28,8 @@
     user: "{{ ansible_user }}"
     state: present
     key: "{{ lookup('file','buffer/{{item}}-{{ ssh_key_filename }}.pub')}}"
-  when: "{{ item == '10.0.0.9' }}"
-  with_items: 
+  when: item == 'biggie'
+  with_items:
     - "{{ groups['ssh_hosts'] }}"
 
 - name: delete known_hosts file
@@ -42,19 +42,19 @@
     src: /usr/local/bin/ssh-keyscan
     dest: /usr/bin/ssh-keyscan
     state: link
-  when: "{{ inventory_hostname == '10.0.0.2' }}"
+  when: inventory_hostname == 'nas'
   become: true
 
 - name: get remote host keys using ssh-keyscan
   ansible.builtin.shell:
-    cmd: "ssh-keyscan -H {{ item }} >> ~/.ssh/known_hosts"
-  when: "{{ item != inventory_hostname }}"
-  with_items: 
+    cmd: "ssh-keyscan -H {{ hostvars[item]['ansible_host'] | default(item) }} >> ~/.ssh/known_hosts"
+  when: item != inventory_hostname
+  with_items:
     - "{{ groups['ssh_hosts'] }}"
 
 - name: get remote host keys using ssh-keyscan special case for build server ssh to itself
   ansible.builtin.shell:
-    cmd: "ssh-keyscan -H {{ item }} >> ~/.ssh/known_hosts"
-  when: "{{ item == '10.0.0.9' }}"
-  with_items: 
+    cmd: "ssh-keyscan -H {{ hostvars[item]['ansible_host'] | default(item) }} >> ~/.ssh/known_hosts"
+  when: item == 'biggie'
+  with_items:
     - "{{ groups['ssh_hosts'] }}"

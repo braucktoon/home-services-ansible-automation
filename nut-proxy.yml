@@ -14,12 +14,13 @@
         tags: [ keepalived-backup ]
       - role: docker
         tags: [ docker ]
+      - role: backup-common
+        tags: [ backup-common ]
       - role: pihole
-        tags: [ pihole ]
+        tags: [ secondary-pihole ]
         FTLCONF_LOCAL_IPV4: 10.0.0.233
         host_name: nut-proxy
         container_name: SecondaryPihole
-        tags: [ secondary-pihole ]
 
   tasks:
     - name: Copy nut client configuration files in place.

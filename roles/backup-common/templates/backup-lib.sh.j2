@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Shared backup library — managed by Ansible. Do not edit manually.
+#
+# Usage in backup scripts:
+#   SCRIPT_NAME="service-name"   # must be set BEFORE sourcing
+#   source /usr/local/lib/backup-lib.sh
+
+DISCORD_WEBHOOK_URL="{{ discord_webhook_url }}"
+BACKUP_LOG_DIR="/var/log/backups"
+LOG_FILE="${BACKUP_LOG_DIR}/${SCRIPT_NAME:-backup}.log"
+
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${SCRIPT_NAME}] $*" | tee -a "$LOG_FILE"
+}
+
+die() {
+    local msg="${1:-Unexpected error}"
+    log "FATAL: $msg"
+    _discord_notify "❌ Backup Failed: ${SCRIPT_NAME}" "${msg}" 15158332
+    exit 1
+}
+
+notify_success() {
+    local msg="${1:-Completed successfully}"
+    log "SUCCESS: $msg"
+    _discord_notify "✅ Backup Success: ${SCRIPT_NAME}" "${msg}" 3066993
+}
+
+_discord_notify() {
+    local title="$1"
+    local description="$2"
+    local color="$3"
+    local host
+    host=$(hostname)
+    local payload
+    payload=$(printf '{"embeds":[{"title":"%s","description":"%s","color":%s,"footer":{"text":"Host: %s"}}]}' \
+        "$title" "$description" "$color" "$host")
+    curl -sS --max-time 15 -X POST "$DISCORD_WEBHOOK_URL" \
+        -H "Content-Type: application/json" \
+        -d "$payload" \
+        >/dev/null 2>&1 || true
+}
+
+check_nas() {
+    log "Checking NAS connectivity..."
+    if ! ssh -q -o ConnectTimeout=10 -o BatchMode=yes nas exit 2>/dev/null; then
+        die "NAS is unreachable — aborting backup."
+    fi
+    log "NAS is reachable."
+}
+
+check_disk_space() {
+    local path="$1"
+    local min_mb="${2:-500}"
+    local available
+    available=$(df -m "$path" | awk 'NR==2 {print $4}')
+    if (( available < min_mb )); then
+        die "Low disk space on ${path}: ${available}MB free, ${min_mb}MB required."
+    fi
+    log "Disk space OK: ${available}MB free on ${path}."
+}
+
+require_dir() {
+    local dir="$1"
+    mkdir -p "$dir" || die "Failed to create directory: $dir"
+}
+
+verify_backup_file() {
+    local file="$1"
+    if [ ! -f "$file" ] || [ ! -s "$file" ]; then
+        die "Backup file is missing or empty: $file"
+    fi
+    local size
+    size=$(du -sh "$file" | cut -f1)
+    log "Backup file verified: $(basename "$file") ($size)"
+}
+
+# Catch any unhandled command failure (set -e + ERR trap as backstop).
+# Calling scripts should set -euo pipefail before sourcing this library.
+_on_error() {
+    local line="$1"
+    log "ERROR: Unexpected failure at line ${line}."
+    _discord_notify \
+        "❌ Backup Failed: ${SCRIPT_NAME}" \
+        "Unexpected error at line ${line} on $(hostname). Check /var/log/backups/${SCRIPT_NAME}.log" \
+        15158332
+    exit 1
+}
+trap '_on_error $LINENO' ERR

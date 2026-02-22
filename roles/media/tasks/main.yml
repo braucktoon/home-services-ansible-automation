@@ -164,6 +164,14 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
+- name: Make plex backup directory
+  ansible.builtin.file:
+    path: "{{ backups_dir }}/plex"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
 - name: Copy backup script file in place.
   template:
     src: "backup-media.sh.j2"

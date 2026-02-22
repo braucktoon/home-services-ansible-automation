@@ -1,0 +1,26 @@
+---
+- name: Run all backup scripts
+  hosts: [service_hosts, media, nut-proxy]
+  become: false
+  vars:
+    backup_filter: "*"
+
+  tasks:
+    - name: Find backup scripts
+      ansible.builtin.find:
+        paths: /usr/local/bin
+        patterns: "backup-{{ backup_filter }}.sh"
+      register: backup_scripts
+
+    - name: Run backup scripts
+      ansible.builtin.shell: "{{ item.path }}"
+      loop: "{{ backup_scripts.files | sort(attribute='path') }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+      register: backup_results
+      ignore_errors: true
+
+    - name: Report failures
+      ansible.builtin.fail:
+        msg: "The following backup scripts failed: {{ backup_results.results | selectattr('failed') | map(attribute='item') | map(attribute='path') | map('basename') | list | join(', ') }}"
+      when: backup_results.results | selectattr('failed') | list | length > 0

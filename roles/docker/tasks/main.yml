@@ -6,11 +6,40 @@
   when: ansible_os_family == "Debian"
   become: true
 
+# Manage the docker apt source explicitly so it is always correct and
+# idempotent, regardless of whether Docker is already installed.
+- name: Ensure docker keyring directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Download docker GPG signing key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+  become: true
+
+- name: Get dpkg architecture
+  ansible.builtin.command: dpkg --print-architecture
+  register: dpkg_arch
+  changed_when: false
+
+- name: Add docker apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ dpkg_arch.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker
+  become: true
+
 - name: Install Docker using the convenience script
   shell: |
     curl -sSL https://get.docker.com | sh
   args:
     executable: /bin/bash
+    creates: /usr/bin/docker
   become: true
 
 - name: Install Docker Compose
@@ -21,11 +50,12 @@
     ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose || true
   args:
     executable: /bin/bash
+    creates: /usr/local/bin/docker-compose
   become: true
 
-- name: Add pi user to docker group
+- name: Add ansible user to docker group
   user:
-    name: pi
+    name: "{{ ansible_user }}"
     groups: docker
     append: true
   become: true

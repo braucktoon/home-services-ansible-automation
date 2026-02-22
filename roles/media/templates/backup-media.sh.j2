@@ -1,21 +1,101 @@
 #!/bin/bash
+set -euo pipefail
 
-DEST_FOLDER='{{backups_dir}}/qbt'
-DEST_FILE="qbt-backup-$(date +'%F_%R').tar"
-BACKUP_CMD="/bin/tar -rvf"
-docker stop media-qbt
-sudo $BACKUP_CMD $DEST_FOLDER/$DEST_FILE /data/media/media-qbt
-docker start media-qbt
-/bin/gzip $DEST_FOLDER/$DEST_FILE
-/usr/bin/find $DEST_FOLDER -mtime +98 -delete
-rsync -auvz --delete $DEST_FOLDER/ nas:/volume1/backups/media/qbt
+SCRIPT_NAME="media"
+source /usr/local/lib/backup-lib.sh
 
-/usr/bin/find /data/media/media-radarr/config/Backups -mtime +98 -delete
-/usr/bin/find /backups/sabnzbd -mtime +98 -delete
-/usr/bin/find /data/media/media-prowlarr/config/Backups -mtime +98 -delete
-/usr/bin/find /data/media/media-sonarr/config/Backups -mtime +98 -delete
+TIMESTAMP=$(date +'%F_%H%M')
 
-rsync -auvz --delete /data/media/media-radarr/config/Backups/ nas:/volume1/backups/media/radarr
-rsync -auvz --delete /backups/sabnzbd/ nas:/volume1/backups/media/sabnzbd
-rsync -auvz --delete /data/media/media-prowlarr/config/Backups/ nas:/volume1/backups/media/prowlarr
-rsync -auvz --delete /data/media/media-sonarr/config/Backups/ nas:/volume1/backups/media/sonarr
+log "Starting media backup."
+
+# Pre-flight checks
+check_disk_space "{{ backups_dir }}"
+check_nas
+
+# ── qBittorrent ───────────────────────────────────────────────────────────────
+# qbt has no built-in backup; stop the container, tar the data dir, restart.
+
+QBT_DEST="{{ backups_dir }}/qbt"
+QBT_FILE="qbt-backup-${TIMESTAMP}.tar.gz"
+
+require_dir "$QBT_DEST"
+
+log "Stopping media-qbt..."
+docker stop media-qbt || die "Failed to stop media-qbt."
+
+log "Archiving qbt config..."
+if ! sudo /bin/tar -czf "$QBT_DEST/$QBT_FILE" /data/media/media-qbt; then
+    docker start media-qbt || true
+    die "Archive failed for qbt."
+fi
+
+log "Restarting media-qbt..."
+docker start media-qbt || log "WARNING: Failed to restart media-qbt."
+
+verify_backup_file "$QBT_DEST/$QBT_FILE"
+find "$QBT_DEST" -name "*.tar.gz" -mtime +98 -delete
+log "Syncing qbt to NAS..."
+rsync -az --delete "$QBT_DEST/" nas:/volume1/backups/media/qbt \
+    || die "rsync failed for qbt."
+log "qbt backup complete."
+
+# ── *arr apps + SABnzbd (use built-in backups, just prune and sync) ───────────
+# Radarr, Sonarr, Prowlarr, and SABnzbd write their own backups on a schedule.
+# We just prune old ones and sync to the NAS.
+
+declare -A SERVICES
+SERVICES=(
+    ["radarr"]="/data/media/media-radarr/config/Backups"
+    ["prowlarr"]="/data/media/media-prowlarr/config/Backups"
+    ["sonarr"]="/data/media/media-sonarr/config/Backups"
+    ["sabnzbd"]="/backups/sabnzbd"
+)
+
+for svc in "${!SERVICES[@]}"; do
+    svc_src="${SERVICES[$svc]}"
+    svc_dest="nas:/volume1/backups/media/${svc}"
+
+    log "Pruning old ${svc} backups in ${svc_src}..."
+    find "$svc_src" -mtime +98 -delete 2>/dev/null \
+        || log "WARNING: Could not prune ${svc} — ${svc_src} may not exist yet."
+
+    log "Syncing ${svc} to NAS..."
+    rsync -az --delete "${svc_src}/" "$svc_dest" \
+        || die "rsync failed for ${svc}."
+    log "${svc} sync complete."
+done
+
+# ── Plex ──────────────────────────────────────────────────────────────────────
+# Plex has no built-in export; stop the container, tar the config dir, restart.
+# Exclude Cache, Logs, and Crash Reports to keep the archive manageable.
+
+PLEX_DEST="{{ backups_dir }}/plex"
+PLEX_FILE="plex-backup-${TIMESTAMP}.tar.gz"
+PLEX_CONFIG="/data/media/media-plex/config"
+
+require_dir "$PLEX_DEST"
+
+log "Stopping media-plex..."
+docker stop media-plex || die "Failed to stop media-plex."
+
+log "Archiving plex config..."
+if ! sudo /bin/tar -czf "$PLEX_DEST/$PLEX_FILE" \
+    --exclude="${PLEX_CONFIG}/Library/Application Support/Plex Media Server/Cache" \
+    --exclude="${PLEX_CONFIG}/Library/Application Support/Plex Media Server/Crash Reports" \
+    --exclude="${PLEX_CONFIG}/Library/Application Support/Plex Media Server/Logs" \
+    "$PLEX_CONFIG"; then
+    docker start media-plex || true
+    die "Archive failed for plex."
+fi
+
+log "Restarting media-plex..."
+docker start media-plex || log "WARNING: Failed to restart media-plex."
+
+verify_backup_file "$PLEX_DEST/$PLEX_FILE"
+find "$PLEX_DEST" -name "*.tar.gz" -mtime +98 -delete
+log "Syncing plex to NAS..."
+rsync -az --delete "$PLEX_DEST/" nas:/volume1/backups/media/plex \
+    || die "rsync failed for plex."
+log "plex backup complete."
+
+notify_success "All media backups completed successfully."
