@@ -22,6 +22,27 @@
     restart_policy: always
   become: false
 
+- name: Create the matter-server data folder
+  ansible.builtin.file:
+    path: "{{ docker_dir }}/matter-server"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: Make sure the matter-server container is created and running
+  community.general.docker_container:
+    name: matter-server
+    image: ghcr.io/home-assistant-libs/python-matter-server:7.0.0
+    pull: yes
+    state: started
+    network_mode: host
+    volumes:
+      - "{{ docker_dir }}/matter-server:/data"
+      - "/run/dbus:/run/dbus:ro"
+    restart_policy: always
+  become: false
+
 - name: Make {{container_name}} backup directory
   ansible.builtin.file:
     path: "{{ backups_dir }}/{{container_name}}"
