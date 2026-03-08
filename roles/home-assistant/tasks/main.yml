@@ -33,7 +33,7 @@
 - name: Make sure the matter-server container is created and running
   community.general.docker_container:
     name: matter-server
-    image: ghcr.io/home-assistant-libs/python-matter-server:7.0.0
+    image: ghcr.io/home-assistant-libs/python-matter-server:7.0.1
     pull: yes
     state: started
     network_mode: host
