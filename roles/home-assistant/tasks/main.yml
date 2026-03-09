@@ -30,16 +30,36 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
+- name: Add IPv6 Thread network routes via HomePods
+  command: ip -6 route replace fd06:7a9e:fd01::/64 via {{ item }} dev eth0
+  loop:
+    - fe80::c83:3dec:6ec:29a7
+    - fe80::44e:2860:220c:7987
+    - fe80::14bb:c8f8:7483:4184
+    - fe80::1c89:44e7:b13b:3cb9
+    - fe80::1015:e3f:1c19:a025
+    - fe80::1ca5:f825:9569:23d9
+    - fe80::d1:7ec0:8db6:1de7
+  become: true
+
+- name: Accept IPv6 RAs on eth0 even with forwarding enabled
+  sysctl:
+    name: net.ipv6.conf.eth0.accept_ra
+    value: '2'
+    sysctl_file: /etc/sysctl.d/99-ipv6-ra.conf
+    reload: yes
+  become: true
+
 - name: Make sure the matter-server container is created and running
   community.general.docker_container:
     name: matter-server
-    image: ghcr.io/home-assistant-libs/python-matter-server:7.0.1
+    image: ghcr.io/home-assistant-libs/python-matter-server:8.1
     pull: yes
     state: started
     network_mode: host
     volumes:
       - "{{ docker_dir }}/matter-server:/data"
-      - "/run/dbus:/run/dbus:ro"
+      - "/run/dbus:/run/dbus"
     restart_policy: always
   become: false
 
