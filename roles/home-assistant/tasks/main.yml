@@ -57,6 +57,7 @@
     pull: yes
     state: started
     network_mode: host
+    command: ["--storage-path", "/data", "--primary-interface", "eth0"]
     volumes:
       - "{{ docker_dir }}/matter-server:/data"
       - "/run/dbus:/run/dbus"
