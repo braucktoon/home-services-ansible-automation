@@ -89,3 +89,31 @@
     job: "/usr/local/bin/backup-{{container_name}}.sh"
     state: present
   become: false
+
+- name: Make matter-server backup directory
+  ansible.builtin.file:
+    path: "{{ backups_dir }}/matter-server"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: Copy matter-server backup script file in place.
+  template:
+    src: "templates/backup-basic-docker.sh.j2"
+    dest: "/usr/local/bin/backup-matter-server.sh"
+    owner: root
+    group: root
+    mode: 0755
+  vars:
+    container_name: matter-server
+
+- name: Add cron job to run matter-server backup weekly, at midnight on Sundays.
+  ansible.builtin.cron:
+    name: Run matter-server-backup script.
+    minute: "0"
+    hour: "0"
+    weekday: "0"
+    job: "/usr/local/bin/backup-matter-server.sh"
+    state: present
+  become: false

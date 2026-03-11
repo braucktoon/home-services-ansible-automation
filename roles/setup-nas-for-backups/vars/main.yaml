@@ -19,3 +19,4 @@ backup_dirs:
   - '/volume1/backups/media/sonarr'
   - '/volume1/backups/SecondaryPihole'
   - '/volume1/backups/zwavejs2mqtt'
+  - '/volume1/backups/matter-server'
