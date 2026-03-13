@@ -30,26 +30,6 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
-- name: Add IPv6 Thread network routes via HomePods
-  command: ip -6 route replace fd06:7a9e:fd01::/64 via {{ item }} dev eth0
-  loop:
-    - fe80::c83:3dec:6ec:29a7
-    - fe80::44e:2860:220c:7987
-    - fe80::14bb:c8f8:7483:4184
-    - fe80::1c89:44e7:b13b:3cb9
-    - fe80::1015:e3f:1c19:a025
-    - fe80::1ca5:f825:9569:23d9
-    - fe80::d1:7ec0:8db6:1de7
-  become: true
-
-- name: Accept IPv6 RAs on eth0 even with forwarding enabled
-  sysctl:
-    name: net.ipv6.conf.eth0.accept_ra
-    value: '2'
-    sysctl_file: /etc/sysctl.d/99-ipv6-ra.conf
-    reload: yes
-  become: true
-
 - name: Make sure the matter-server container is created and running
   community.general.docker_container:
     name: matter-server
@@ -117,3 +97,24 @@
     job: "/usr/local/bin/backup-matter-server.sh"
     state: present
   become: false
+
+- name: Add IPv6 forwarding and RA settings to sysctl.conf for Thread/Matter
+  ansible.builtin.blockinfile:
+    path: /etc/sysctl.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - matter/thread ipv6"
+    block: |
+      net.ipv6.conf.all.forwarding=1
+      net.ipv6.conf.all.accept_ra=2
+      net.ipv6.conf.eth0.accept_ra=2
+      net.ipv6.conf.eth0.forwarding=1
+
+      # Allow the Pi to accept the specific /64 routes from the HomePod
+      net.ipv6.conf.all.accept_ra_rt_info_max_plen = 64
+      net.ipv6.conf.eth0.accept_ra_rt_info_max_plen = 64
+
+- name: Add delayed sysctl reload to rc.local for Thread/Matter
+  ansible.builtin.lineinfile:
+    path: /etc/rc.local
+    line: "(sleep 15; /sbin/sysctl -p) &"
+    insertbefore: "^exit 0"
+    state: present
