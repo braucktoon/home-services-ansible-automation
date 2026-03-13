@@ -103,13 +103,10 @@
     path: /etc/sysctl.conf
     marker: "# {mark} ANSIBLE MANAGED BLOCK - matter/thread ipv6"
     block: |
-      net.ipv6.conf.all.forwarding=1
-      net.ipv6.conf.all.accept_ra=2
       net.ipv6.conf.eth0.accept_ra=2
       net.ipv6.conf.eth0.forwarding=1
 
       # Allow the Pi to accept the specific /64 routes from the HomePod
-      net.ipv6.conf.all.accept_ra_rt_info_max_plen = 64
       net.ipv6.conf.eth0.accept_ra_rt_info_max_plen = 64
 
 - name: Add delayed sysctl reload to rc.local for Thread/Matter
