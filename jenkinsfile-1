@@ -7,8 +7,8 @@ pipeline {
   environment {
     DOCKER_BUILDKIT = '1'
     VAULT_PW = credentials('vaultpw')
-    // Tells Ansible to handle non-UTF-8 characters gracefully on new-proxy
-    MODULE_STRICT_UTF8_RESPONSE = '0'
+    // Corrected variable name with the ANSIBLE_ prefix to bypass strict UTF8 responses
+    ANSIBLE_MODULE_STRICT_UTF8_RESPONSE = 'False'
   }
   stages {
     stage('Test') {
