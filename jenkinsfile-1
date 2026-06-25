@@ -7,6 +7,8 @@ pipeline {
   environment {
     DOCKER_BUILDKIT = '1'
     VAULT_PW = credentials('vaultpw')
+    // Tells Ansible to handle non-UTF-8 characters gracefully on new-proxy
+    MODULE_STRICT_UTF8_RESPONSE = '0'
   }
   stages {
     stage('Test') {
@@ -16,11 +18,12 @@ pipeline {
             env.HOME = env.WORKSPACE
             sh 'printenv'
 
+            // Note: Escaped \$VAULT_PW to prevent Jenkins Groovy string interpolation security warnings
             sh """
             ansible --version
             whoami
             ansible-galaxy collection install community.docker
-            ansible-playbook -i inventory --vault-password-file "$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/id_rsa
+            ansible-playbook -i inventory --vault-password-file "\$VAULT_PW" cd-services.yml --private-key /home/pi/.ssh/id_rsa
             rm -rf ~/internet-pi-src
             mkdir -p ~/internet-pi-src
             git clone https://github.com/geerlingguy/internet-pi.git ~/internet-pi-src/
@@ -29,7 +32,7 @@ pipeline {
             cp -r ~/internet-pi/templates/docker-compose.yml.j2 ~/internet-pi-src/templates/
             cd ~/internet-pi-src
             ansible-galaxy collection install -r requirements.yml --force
-            ansible-playbook --vault-password-file "$VAULT_PW" main.yml --private-key /home/pi/.ssh/id_rsa
+            ansible-playbook --vault-password-file "\$VAULT_PW" main.yml --private-key /home/pi/.ssh/id_rsa
             """
         }
       }
